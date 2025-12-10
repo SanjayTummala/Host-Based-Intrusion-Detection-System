@@ -18,172 +18,165 @@ function AnimatedHidsSection({ hasAlerts, hasHighSeverity }) {
     <div className="hids-section">
       <div className="hids-header-row">
         <div>
-          <h2>HIDS Organization View</h2>
+          <h2>HIDS Traffic & Detection Flow</h2>
           <p>
-            Real-time visualization of an organization monitored by a
-            Host-Based Intrusion Detection System. Host traffic, attacker
-            activity, and alert telemetry are shown as flowing lines.
+            Visual flow of how traffic enters the organization, reaches the
+            hosts, is inspected by the HIDS sensor, and finally generates
+            alerts for the security admin.
           </p>
         </div>
         <div className={statusClass}>{statusText}</div>
       </div>
 
-      <div className="hids-org-layout">
-        {/* Attacker side */}
-        <div className="hids-column attacker-column">
-          <div className="hids-card attacker-card">
+      <div className="hids-flow">
+        {/* Stage 1: Attacker */}
+        <div className="flow-stage">
+          <div className="hids-card">
             <div className="hids-avatar hids-avatar-attacker">👨‍💻</div>
             <div className="hids-card-title">External Attacker</div>
             <div className="hids-card-subtitle">
-              Malicious attempts from outside the organization
+              Sends malicious traffic from outside the network
             </div>
             <ul className="hids-card-list">
-              <li>Brute force logins on exposed services</li>
+              <li>Brute-force login attempts</li>
               <li>Suspicious outbound connections</li>
               <li>Privilege escalation on hosts</li>
             </ul>
           </div>
-
-          {/* Attacker → Network traffic path (red) */}
-          {hasAlerts && (
-            <div className="attacker-traffic">
-              <div className="attacker-traffic-label">Malicious traffic</div>
-              <div className="attacker-traffic-line">
-                <span
-                  className={
-                    "attacker-packet" + (hasHighSeverity ? " fast" : "")
-                  }
-                />
-              </div>
-            </div>
-          )}
+          <div className="flow-step-label">1. Attack traffic originates</div>
         </div>
 
-        {/* Network + HIDS core */}
-        <div className="hids-column network-column">
-          <div className="hids-network-frame">
-            <div className="hids-network-title">Organization Network</div>
+        {/* Connector 1: Attacker -> Network */}
+        <div className="flow-connector">
+          <div className="connector-label">Traffic entering the network</div>
+          <div
+            className={
+              "connector-path " +
+              (hasAlerts ? "connector-alert" : "connector-normal")
+            }
+          >
+            <span
+              className={
+                "connector-packet " +
+                (hasAlerts ? "packet-alert" : "packet-normal") +
+                (hasHighSeverity ? " packet-fast" : "")
+              }
+            />
+          </div>
+        </div>
 
-            <div className="hids-row">
-              {/* Firewall */}
-              <div className="hids-node firewall-node">
-                <div className="hids-node-icon">🧱</div>
-                <div className="hids-node-title">Firewall</div>
-                <div className="hids-node-subtitle">
-                  Filters incoming and outgoing connections
-                </div>
-              </div>
-
-              {/* HIDS Core */}
-              <div className="hids-node hids-core-node">
-                <div className="hids-node-icon hids-node-icon-core">🛡️</div>
-                <div className="hids-node-title">HIDS Sensor</div>
-                <div className="hids-node-subtitle">
-                  Monitors host logs & suspicious behavior
-                </div>
-                <div
-                  className={`hids-core-pulse ${
-                    hasHighSeverity ? "danger" : hasAlerts ? "active" : ""
-                  }`}
-                />
-              </div>
-            </div>
-
-            <div className="hids-row hids-servers-row">
-              {/* Application server */}
-              <div className="hids-node server-node">
-                <div className="hids-node-icon">🖥️</div>
-                <div className="hids-node-title">App Server</div>
-                <div className="hids-node-subtitle">
-                  Runs business applications
-                </div>
-              </div>
-
-              {/* Database server */}
-              <div className="hids-node server-node">
-                <div className="hids-node-icon">💾</div>
-                <div className="hids-node-title">Database Server</div>
-                <div className="hids-node-subtitle">
-                  Stores critical organization data
-                </div>
-              </div>
-            </div>
-
-            <div className="hids-row hids-users-row">
-              <div className="hids-node user-node">
+        {/* Stage 2: Hosts & Servers */}
+        <div className="flow-stage">
+          <div className="hids-card hosts-card">
+            <div className="hosts-row">
+              <div className="hids-node-small">
                 <div className="hids-node-icon">👩‍💻</div>
                 <div className="hids-node-title">User A</div>
                 <div className="hids-node-subtitle">HR workstation</div>
               </div>
-              <div className="hids-node user-node">
+              <div className="hids-node-small">
                 <div className="hids-node-icon">👨‍💻</div>
                 <div className="hids-node-title">User B</div>
                 <div className="hids-node-subtitle">Finance workstation</div>
               </div>
-              <div className="hids-node user-node">
+              <div className="hids-node-small">
                 <div className="hids-node-icon">🧑‍💻</div>
                 <div className="hids-node-title">User C</div>
                 <div className="hids-node-subtitle">Remote employee</div>
               </div>
             </div>
-
-            {/* Traffic animation layer inside the network */}
-            <div className="hids-traffic-layer">
-              {/* Blue: normal internal host traffic */}
-              <div className="traffic-path path-internal">
-                <span className="traffic-packet internal" />
+            <div className="hosts-row servers-row">
+              <div className="hids-node-small">
+                <div className="hids-node-icon">🖥️</div>
+                <div className="hids-node-title">App Server</div>
+                <div className="hids-node-subtitle">Business logic</div>
               </div>
-
-              {/* Green: telemetry from HIDS to admin (we just show inside org box here) */}
-              <div className="traffic-path path-telemetry">
-                <span
-                  className={
-                    "traffic-packet telemetry" +
-                    (hasAlerts || hasHighSeverity ? " bright" : "")
-                  }
-                />
+              <div className="hids-node-small">
+                <div className="hids-node-icon">💾</div>
+                <div className="hids-node-title">DB Server</div>
+                <div className="hids-node-subtitle">Critical data</div>
               </div>
             </div>
           </div>
+          <div className="flow-step-label">
+            2. Hosts & servers see the traffic
+          </div>
         </div>
 
-        {/* Admin / SOC side */}
-        <div className="hids-column admin-column">
-          <div className="hids-card admin-card">
-            <div className="hids-avatar hids-avatar-admin">🧑‍💼</div>
-            <div className="hids-card-title">Security Admin</div>
-            <div className="hids-card-subtitle">
-              Receives HIDS alerts & investigates incidents
+        {/* Connector 2: Hosts -> HIDS */}
+        <div className="flow-connector">
+          <div className="connector-label">Host logs & events to HIDS</div>
+          <div className="connector-path connector-telemetry">
+            <span
+              className={
+                "connector-packet packet-telemetry" +
+                (hasAlerts || hasHighSeverity ? " packet-bright" : "")
+              }
+            />
+          </div>
+        </div>
+
+        {/* Stage 3: HIDS Sensor & Admin */}
+        <div className="flow-stage">
+          <div className="hids-card hids-core-card">
+            <div className="hids-core-row">
+              <div className="hids-node-small hids-core-node">
+                <div className="hids-node-icon hids-core-icon">🛡️</div>
+                <div className="hids-node-title">HIDS Sensor</div>
+                <div className="hids-node-subtitle">
+                  Analyses host logs & detects anomalies
+                </div>
+                <div
+                  className={
+                    "hids-core-pulse " +
+                    (hasHighSeverity
+                      ? "danger"
+                      : hasAlerts
+                      ? "active"
+                      : "normal")
+                  }
+                />
+              </div>
+              <div className="hids-node-small admin-node">
+                <div className="hids-node-icon">🧑‍💼</div>
+                <div className="hids-node-title">Security Admin</div>
+                <div className="hids-node-subtitle">
+                  Receives alerts & investigates incidents
+                </div>
+
+                <div className="mini-dashboard">
+                  <div className="mini-bar-row">
+                    <div className="mini-bar-label">Normal</div>
+                    <div className="mini-bar-track">
+                      <div className="mini-bar-fill normal" />
+                    </div>
+                  </div>
+                  <div className="mini-bar-row">
+                    <div className="mini-bar-label">Suspicious</div>
+                    <div className="mini-bar-track">
+                      <div className="mini-bar-fill active" />
+                    </div>
+                  </div>
+                  <div className="mini-bar-row">
+                    <div className="mini-bar-label">Critical</div>
+                    <div className="mini-bar-track">
+                      <div
+                        className={
+                          "mini-bar-fill danger" +
+                          (hasHighSeverity ? " pulse" : "")
+                        }
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
 
-            <div className="mini-dashboard">
-              <div className="mini-bar-row">
-                <div className="mini-bar-label">Normal</div>
-                <div className="mini-bar-track">
-                  <div className="mini-bar-fill normal" />
-                </div>
-              </div>
-              <div className="mini-bar-row">
-                <div className="mini-bar-label">Suspicious</div>
-                <div className="mini-bar-track">
-                  <div className="mini-bar-fill active" />
-                </div>
-              </div>
-              <div className="mini-bar-row">
-                <div className="mini-bar-label">Critical</div>
-                <div className="mini-bar-track">
-                  <div
-                    className={
-                      "mini-bar-fill danger" + (hasHighSeverity ? " pulse" : "")
-                    }
-                  />
-                </div>
-              </div>
-            </div>
-
-            {/* Green: HIDS → Admin telemetry path */}
+            {/* Connector 3: HIDS -> Admin */}
             <div className="admin-telemetry">
-              <div className="admin-telemetry-label">HIDS alerts to console</div>
+              <div className="admin-telemetry-label">
+                Alerts forwarded to console
+              </div>
               <div className="admin-telemetry-line">
                 <span
                   className={
@@ -193,24 +186,26 @@ function AnimatedHidsSection({ hasAlerts, hasHighSeverity }) {
                 />
               </div>
             </div>
+          </div>
 
-            <div className="admin-note">
-              The HIDS engine forwards suspicious activity from hosts to this
-              console for analysis and response.
-            </div>
+          <div className="flow-step-label">
+            3. HIDS detects & sends alerts to the admin
           </div>
         </div>
       </div>
 
       <div className="hids-legend">
         <div className="legend-item">
-          <span className="legend-dot normal" /> Normal host traffic
+          <span className="legend-dot legend-normal" /> Attacker traffic entering
+          the network
         </div>
         <div className="legend-item">
-          <span className="legend-dot telemetry" /> HIDS telemetry & alerts
+          <span className="legend-dot legend-telemetry" /> Host logs & HIDS
+          telemetry
         </div>
         <div className="legend-item">
-          <span className="legend-dot danger" /> Malicious / high-severity traffic
+          <span className="legend-dot legend-danger" /> Malicious / high-severity
+          detection
         </div>
       </div>
     </div>
