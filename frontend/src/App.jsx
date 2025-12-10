@@ -85,17 +85,21 @@ function App() {
 
   return (
     <div className="page-root">
-      {/* Full-width title bar */}
+      {/* Top header with logo on the left */}
       <header className="page-header">
-        <h1>Host-Based Intrusion Detection System</h1>
+        <div className="page-header-inner">
+          <div className="page-header-logo">
+            <span className="page-header-logo-text">HIDS</span>
+          </div>
+          <h1>Host-Based Intrusion Detection System</h1>
+        </div>
       </header>
 
       {/* Layout: sidebar + main */}
       <div className="app-root">
         <aside className="app-sidebar">
           <div className="sidebar-header">
-            <div className="sidebar-logo">🛡️</div>
-            <div className="sidebar-subtitle">HIDS Sections</div>
+            <div className="sidebar-subtitle">Dashboard Sections</div>
           </div>
 
           <nav className="sidebar-nav">
@@ -155,7 +159,6 @@ function App() {
         </aside>
 
         <main className="app-main">
-          {/* Section content */}
           {error && <div className="error-banner">{error}</div>}
 
           <section className="app-section">
