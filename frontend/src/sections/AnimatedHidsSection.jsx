@@ -21,8 +21,8 @@ function AnimatedHidsSection({ hasAlerts, hasHighSeverity }) {
           <h2>HIDS Organization View</h2>
           <p>
             Real-time visualization of an organization monitored by a
-            Host-Based Intrusion Detection System. Host activity and attacker
-            traffic are continuously inspected.
+            Host-Based Intrusion Detection System. Host traffic, attacker
+            activity, and alert telemetry are shown as flowing lines.
           </p>
         </div>
         <div className={statusClass}>{statusText}</div>
@@ -35,14 +35,28 @@ function AnimatedHidsSection({ hasAlerts, hasHighSeverity }) {
             <div className="hids-avatar hids-avatar-attacker">👨‍💻</div>
             <div className="hids-card-title">External Attacker</div>
             <div className="hids-card-subtitle">
-              Attempts to breach from the internet
+              Malicious attempts from outside the organization
             </div>
             <ul className="hids-card-list">
-              <li>Brute force logins</li>
-              <li>Suspicious outbound traffic</li>
-              <li>Privilege escalation attempts</li>
+              <li>Brute force logins on exposed services</li>
+              <li>Suspicious outbound connections</li>
+              <li>Privilege escalation on hosts</li>
             </ul>
           </div>
+
+          {/* Attacker → Network traffic path (red) */}
+          {hasAlerts && (
+            <div className="attacker-traffic">
+              <div className="attacker-traffic-label">Malicious traffic</div>
+              <div className="attacker-traffic-line">
+                <span
+                  className={
+                    "attacker-packet" + (hasHighSeverity ? " fast" : "")
+                  }
+                />
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Network + HIDS core */}
@@ -56,7 +70,7 @@ function AnimatedHidsSection({ hasAlerts, hasHighSeverity }) {
                 <div className="hids-node-icon">🧱</div>
                 <div className="hids-node-title">Firewall</div>
                 <div className="hids-node-subtitle">
-                  Filters incoming connections
+                  Filters incoming and outgoing connections
                 </div>
               </div>
 
@@ -65,7 +79,7 @@ function AnimatedHidsSection({ hasAlerts, hasHighSeverity }) {
                 <div className="hids-node-icon hids-node-icon-core">🛡️</div>
                 <div className="hids-node-title">HIDS Sensor</div>
                 <div className="hids-node-subtitle">
-                  Watches host logs & processes
+                  Monitors host logs & suspicious behavior
                 </div>
                 <div
                   className={`hids-core-pulse ${
@@ -90,7 +104,7 @@ function AnimatedHidsSection({ hasAlerts, hasHighSeverity }) {
                 <div className="hids-node-icon">💾</div>
                 <div className="hids-node-title">Database Server</div>
                 <div className="hids-node-subtitle">
-                  Stores critical company data
+                  Stores critical organization data
                 </div>
               </div>
             </div>
@@ -113,19 +127,22 @@ function AnimatedHidsSection({ hasAlerts, hasHighSeverity }) {
               </div>
             </div>
 
-            {/* Animated traffic lines inside the network */}
+            {/* Traffic animation layer inside the network */}
             <div className="hids-traffic-layer">
-              <div className="traffic-path path-horizontal">
-                <span className="traffic-packet" />
+              {/* Blue: normal internal host traffic */}
+              <div className="traffic-path path-internal">
+                <span className="traffic-packet internal" />
               </div>
-              <div className="traffic-path path-diagonal">
-                <span className="traffic-packet" />
+
+              {/* Green: telemetry from HIDS to admin (we just show inside org box here) */}
+              <div className="traffic-path path-telemetry">
+                <span
+                  className={
+                    "traffic-packet telemetry" +
+                    (hasAlerts || hasHighSeverity ? " bright" : "")
+                  }
+                />
               </div>
-              {hasAlerts && (
-                <div className="traffic-path path-alert">
-                  <span className="traffic-packet alert" />
-                </div>
-              )}
             </div>
           </div>
         </div>
@@ -136,7 +153,7 @@ function AnimatedHidsSection({ hasAlerts, hasHighSeverity }) {
             <div className="hids-avatar hids-avatar-admin">🧑‍💼</div>
             <div className="hids-card-title">Security Admin</div>
             <div className="hids-card-subtitle">
-              Monitors HIDS alerts & metrics
+              Receives HIDS alerts & investigates incidents
             </div>
 
             <div className="mini-dashboard">
@@ -156,17 +173,30 @@ function AnimatedHidsSection({ hasAlerts, hasHighSeverity }) {
                 <div className="mini-bar-label">Critical</div>
                 <div className="mini-bar-track">
                   <div
-                    className={`mini-bar-fill danger ${
-                      hasHighSeverity ? "pulse" : ""
-                    }`}
+                    className={
+                      "mini-bar-fill danger" + (hasHighSeverity ? " pulse" : "")
+                    }
                   />
                 </div>
               </div>
             </div>
 
+            {/* Green: HIDS → Admin telemetry path */}
+            <div className="admin-telemetry">
+              <div className="admin-telemetry-label">HIDS alerts to console</div>
+              <div className="admin-telemetry-line">
+                <span
+                  className={
+                    "admin-telemetry-packet" +
+                    (hasAlerts || hasHighSeverity ? " bright" : "")
+                  }
+                />
+              </div>
+            </div>
+
             <div className="admin-note">
-              HIDS sends host alerts to the admin console for investigation and
-              response.
+              The HIDS engine forwards suspicious activity from hosts to this
+              console for analysis and response.
             </div>
           </div>
         </div>
@@ -174,13 +204,13 @@ function AnimatedHidsSection({ hasAlerts, hasHighSeverity }) {
 
       <div className="hids-legend">
         <div className="legend-item">
-          <span className="legend-dot normal" /> Normal host activity
+          <span className="legend-dot normal" /> Normal host traffic
         </div>
         <div className="legend-item">
-          <span className="legend-dot active" /> Suspicious / alert traffic
+          <span className="legend-dot telemetry" /> HIDS telemetry & alerts
         </div>
         <div className="legend-item">
-          <span className="legend-dot danger" /> High severity detection
+          <span className="legend-dot danger" /> Malicious / high-severity traffic
         </div>
       </div>
     </div>
