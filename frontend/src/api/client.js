@@ -1,8 +1,6 @@
-// frontend/src/api/client.js
 import axios from "axios";
 
-// Backend on Render
-// If you ever change your Render service name, update this URL.
+// Render backend
 const BASE_URL =
   import.meta.env.VITE_API_BASE_URL ||
   "https://host-based-intrusion-detection-system.onrender.com";

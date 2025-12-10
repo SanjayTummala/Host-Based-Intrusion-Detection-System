@@ -2,6 +2,5 @@ fastapi
 uvicorn
 sqlalchemy
 pydantic
-scikit-learn
-numpy
+pydantic-settings
 python-multipart

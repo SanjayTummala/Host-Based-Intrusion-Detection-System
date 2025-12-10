@@ -1,0 +1,24 @@
+.metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.metric-card {
+  padding: 1rem;
+  border-radius: 0.75rem;
+  background: #1f2937;
+}
+
+.metric-card h3 {
+  margin: 0 0 0.25rem;
+  font-size: 0.9rem;
+  color: #9ca3af;
+}
+
+.metric-card p {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 600;
+}

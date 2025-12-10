@@ -1,124 +1,78 @@
-// src/App.jsx
 import React, { useEffect, useState } from "react";
-import AttackSimulationSection from "./sections/AttackSimulationSection.jsx";
-import CollectedLogsSection from "./sections/CollectedLogsSection.jsx";
-import AnimatedHidsSection from "./sections/AnimatedHidsSection.jsx";
-
-const LOCAL_STORAGE_KEY = "hids_collected_logs";
+import { fetchAlerts, fetchMetrics, startAttack } from "./api/client";
+import AlertsTable from "./components/AlertsTable";
+import MetricsCards from "./components/MetricsCards";
+import "./App.css";
 
 function App() {
-  const [activeSection, setActiveSection] = useState("attack");
-  const [currentAlerts, setCurrentAlerts] = useState([]);
-  const [collectedLogs, setCollectedLogs] = useState([]);
+  const [alerts, setAlerts] = useState([]);
+  const [metrics, setMetrics] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [attackLoading, setAttackLoading] = useState(false);
+  const [error, setError] = useState("");
+
+  async function loadData() {
+    try {
+      setLoading(true);
+      setError("");
+      const [alertsData, metricsData] = await Promise.all([
+        fetchAlerts(),
+        fetchMetrics(),
+      ]);
+      setAlerts(alertsData);
+      setMetrics(metricsData);
+    } catch (err) {
+      console.error(err);
+      setError("Failed to load data from backend");
+    } finally {
+      setLoading(false);
+    }
+  }
 
   useEffect(() => {
-    try {
-      const raw = window.localStorage.getItem(LOCAL_STORAGE_KEY);
-      if (raw) {
-        const parsed = JSON.parse(raw);
-        if (Array.isArray(parsed)) setCollectedLogs(parsed);
-      }
-    } catch {
-      setCollectedLogs([]);
-    }
+    loadData();
   }, []);
 
-  useEffect(() => {
+  async function handleSimulateAttack() {
     try {
-      window.localStorage.setItem(
-        LOCAL_STORAGE_KEY,
-        JSON.stringify(collectedLogs)
-      );
-    } catch {
-      // ignore
+      setAttackLoading(true);
+      setError("");
+      await startAttack();
+      await loadData();
+    } catch (err) {
+      console.error(err);
+      setError("Failed to simulate attack");
+    } finally {
+      setAttackLoading(false);
     }
-  }, [collectedLogs]);
-
-  const handleAttackRun = (alertsFromRun) => {
-    const runEntry = {
-      id: Date.now(),
-      timestamp: new Date().toISOString(),
-      alerts: alertsFromRun || [],
-    };
-
-    setCurrentAlerts(alertsFromRun || []);
-    setCollectedLogs((prev) => [runEntry, ...prev].slice(0, 20));
-  };
-
-  const handleClearLogs = () => {
-    setCollectedLogs([]);
-    setCurrentAlerts([]);
-    try {
-      window.localStorage.removeItem(LOCAL_STORAGE_KEY);
-    } catch {
-      // ignore
-    }
-  };
-
-  const renderSection = () => {
-    if (activeSection === "attack") {
-      return (
-        <AttackSimulationSection
-          onAttackRun={handleAttackRun}
-          liveAlerts={currentAlerts}
-        />
-      );
-    }
-    if (activeSection === "logs") {
-      return (
-        <CollectedLogsSection
-          logs={collectedLogs}
-          onClearLogs={handleClearLogs}
-        />
-      );
-    }
-    return <AnimatedHidsSection />;
-  };
+  }
 
   return (
-    <div className="app-root">
+    <div className="app">
       <header className="app-header">
-        <h1 className="app-title">
-          Host-Based Intrusion Detection System (HIDS) Dashboard
-        </h1>
-        <p className="app-subtitle">
-          Simulate host attacks, inspect generated alerts, and explore how a
-          HIDS pipeline works – built as a portfolio project.
-        </p>
+        <h1>Host-Based Intrusion Detection System</h1>
+        <p>Real-time alerts & metrics from your HIDS backend</p>
       </header>
 
-      <div className="app-body">
-        <aside className="sidebar">
-          <button
-            className={
-              activeSection === "attack" ? "nav-btn nav-btn-active" : "nav-btn"
-            }
-            onClick={() => setActiveSection("attack")}
-          >
-            Attack Lab
-          </button>
-          <button
-            className={
-              activeSection === "logs" ? "nav-btn nav-btn-active" : "nav-btn"
-            }
-            onClick={() => setActiveSection("logs")}
-          >
-            Collected Logs
-          </button>
-          <button
-            className={
-              activeSection === "animated"
-                ? "nav-btn nav-btn-active"
-                : "nav-btn"
-            }
-            onClick={() => setActiveSection("animated")}
-          >
-            HIDS Flow (Animated)
-          </button>
-        </aside>
+      <main className="app-main">
+        {error && <div className="error-banner">{error}</div>}
 
-        <main className="main-panel">{renderSection()}</main>
-      </div>
+        <div className="controls">
+          <button onClick={loadData} disabled={loading || attackLoading}>
+            {loading ? "Refreshing..." : "Refresh Data"}
+          </button>
+          <button onClick={handleSimulateAttack} disabled={attackLoading || loading}>
+            {attackLoading ? "Simulating..." : "Simulate Attack"}
+          </button>
+        </div>
+
+        <MetricsCards metrics={metrics} loading={loading} />
+
+        <section className="alerts-section">
+          <h2>Alerts</h2>
+          <AlertsTable alerts={alerts} loading={loading} />
+        </section>
+      </main>
     </div>
   );
 }

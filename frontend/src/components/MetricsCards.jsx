@@ -1,32 +1,29 @@
-// src/components/MetricsCards.jsx
 import React from "react";
+import "./MetricsCards.css";
 
-function MetricsCards({ metrics }) {
-  if (!metrics) return null;
+function MetricsCards({ metrics, loading }) {
+  if (loading && !metrics) {
+    return <p>Loading metrics...</p>;
+  }
 
-  const cards = [
-    {
-      label: "Total Events",
-      value: metrics.total_events,
-    },
-    {
-      label: "Total Alerts",
-      value: metrics.total_alerts,
-    },
-    {
-      label: "High Severity Alerts",
-      value: metrics.high_severity,
-    },
-  ];
+  if (!metrics) {
+    return <p>No metrics available.</p>;
+  }
 
   return (
     <div className="metrics-grid">
-      {cards.map((c) => (
-        <div key={c.label} className="metric-card">
-          <div className="metric-label">{c.label}</div>
-          <div className="metric-value">{c.value}</div>
-        </div>
-      ))}
+      <div className="metric-card">
+        <h3>Total Events</h3>
+        <p>{metrics.total_events}</p>
+      </div>
+      <div className="metric-card">
+        <h3>Total Alerts</h3>
+        <p>{metrics.total_alerts}</p>
+      </div>
+      <div className="metric-card">
+        <h3>High Severity</h3>
+        <p>{metrics.high_severity}</p>
+      </div>
     </div>
   );
 }

@@ -1,46 +1,40 @@
-// src/components/AlertsTable.jsx
 import React from "react";
+import "./AlertsTable.css";
 
-function AlertsTable({ alerts }) {
-  if (!alerts || alerts.length === 0) {
-    return <p className="empty-text">No alerts available.</p>;
+function AlertsTable({ alerts, loading }) {
+  if (loading && (!alerts || alerts.length === 0)) {
+    return <p>Loading alerts...</p>;
   }
 
-  const severityClass = (severity) => {
-    if (severity === "High") return "severity-badge severity-high";
-    if (severity === "Medium") return "severity-badge severity-medium";
-    return "severity-badge severity-low";
-  };
+  if (!alerts || alerts.length === 0) {
+    return <p>No alerts found.</p>;
+  }
 
   return (
-    <div className="table-wrapper">
-      <table className="alerts-table">
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>Event</th>
-            <th>Severity</th>
-            <th>Score</th>
-            <th>Description</th>
-            <th>Timestamp</th>
+    <table className="alerts-table">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Event Type</th>
+          <th>Severity</th>
+          <th>Score</th>
+          <th>Description</th>
+          <th>Timestamp (UTC)</th>
+        </tr>
+      </thead>
+      <tbody>
+        {alerts.map((alert) => (
+          <tr key={alert.id} className={`severity-${alert.severity.toLowerCase()}`}>
+            <td>{alert.id}</td>
+            <td>{alert.event_type}</td>
+            <td>{alert.severity}</td>
+            <td>{alert.score}</td>
+            <td>{alert.description}</td>
+            <td>{new Date(alert.timestamp).toLocaleString()}</td>
           </tr>
-        </thead>
-        <tbody>
-          {alerts.map((a) => (
-            <tr key={a.id}>
-              <td>{a.id}</td>
-              <td>{(a.event_type || "").split("_").join(" ")}</td>
-              <td>
-                <span className={severityClass(a.severity)}>{a.severity}</span>
-              </td>
-              <td>{Number(a.score).toFixed(3)}</td>
-              <td>{a.description}</td>
-              <td>{new Date(a.timestamp).toLocaleString()}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
+        ))}
+      </tbody>
+    </table>
   );
 }
 

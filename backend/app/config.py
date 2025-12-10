@@ -1,4 +1,11 @@
-# backend/app/config.py
+from pydantic_settings import BaseSettings
 
-# Simple config module – no Pydantic needed
-DATABASE_URL = "sqlite:///./hids.db"
+
+class Settings(BaseSettings):
+    DATABASE_URL: str = "sqlite:///./hids.db"
+
+    class Config:
+        env_file = ".env"
+
+
+settings = Settings()

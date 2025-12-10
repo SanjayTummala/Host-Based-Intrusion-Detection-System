@@ -1,40 +1,20 @@
-# backend/app/ml_model.py
-from typing import Tuple
-
-import numpy as np
-from sklearn.ensemble import IsolationForest
+from random import random
 
 
-class HidsModel:
-    """Tiny anomaly detector for the demo dashboard.
+def compute_score(event_type: str, severity: str) -> float:
+    base = {
+        "brute_force_login": 0.18,
+        "unauthorized_file_access": 0.16,
+        "privilege_escalation": 0.19,
+        "suspicious_process": 0.17,
+        "suspicious_network_outbound": 0.17,
+    }.get(event_type, 0.15)
 
-    We train an IsolationForest on fake 'normal' host metrics:
-    - CPU usage (%)
-    - Disk operations per second
-    - Network egress (KB/s)
-    """
+    sev_factor = {
+        "Low": 0.8,
+        "Medium": 1.0,
+        "High": 1.3,
+    }.get(severity, 1.0)
 
-    def __init__(self) -> None:
-        normal_data = np.random.normal(
-            loc=[30.0, 200.0, 50.0],   # mean for cpu, disk_ops, net_out
-            scale=[10.0, 80.0, 30.0], # std deviation
-            size=(500, 3),
-        )
-
-        self.model = IsolationForest(
-            contamination=0.05,
-            n_estimators=100,
-            random_state=42,
-        )
-        self.model.fit(normal_data)
-
-    def score_event(self, cpu: float, disk_ops: float, net_out: float) -> Tuple[float, bool]:
-        """Return (anomaly_score, is_malicious)."""
-        x = np.array([[cpu, disk_ops, net_out]], dtype=float)
-        raw = float(self.model.decision_function(x)[0])
-        score = -raw  # higher = more anomalous
-        is_malicious = raw < 0.0
-        return score, bool(is_malicious)
-
-
-hids_model = HidsModel()
+    jitter = (random() - 0.5) * 0.05  # small randomness
+    return round(max(0.0, min(1.0, base * sev_factor + jitter)), 3)

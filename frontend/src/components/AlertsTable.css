@@ -1,0 +1,35 @@
+.alerts-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #020617;
+  border-radius: 0.75rem;
+  overflow: hidden;
+  font-size: 0.85rem;
+}
+
+.alerts-table thead {
+  background: #111827;
+}
+
+.alerts-table th,
+.alerts-table td {
+  padding: 0.5rem 0.75rem;
+  text-align: left;
+  border-bottom: 1px solid #1f2937;
+}
+
+.alerts-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.severity-low td {
+  background: rgba(34, 197, 94, 0.04);
+}
+
+.severity-medium td {
+  background: rgba(234, 179, 8, 0.04);
+}
+
+.severity-high td {
+  background: rgba(239, 68, 68, 0.07);
+}

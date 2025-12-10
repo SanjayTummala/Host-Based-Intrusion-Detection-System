@@ -1,66 +1,61 @@
-# backend/app/simulate.py
 from datetime import datetime
-import random
-from typing import List, Tuple
-
+from random import choice
 from sqlalchemy.orm import Session
+from . import models, ml_model
 
-from .ml_model import hids_model
-from .models import Alert
 
 EVENT_TYPES = [
-    "unauthorized_file_access",
-    "suspicious_process",
     "brute_force_login",
+    "unauthorized_file_access",
     "privilege_escalation",
+    "suspicious_process",
     "suspicious_network_outbound",
 ]
 
-
-def _random_host_features() -> Tuple[float, float, float]:
-    """Generate fake host metrics (cpu, disk_ops, net_out)."""
-    cpu = random.uniform(10.0, 95.0)
-    disk_ops = random.uniform(50.0, 800.0)
-    net_out = random.uniform(10.0, 400.0)
-    return cpu, disk_ops, net_out
+SEVERITY_WEIGHTS = [
+    ("Low", 0.6),
+    ("Medium", 0.35),
+    ("High", 0.05),
+]
 
 
-def _severity_from_score(score: float) -> str:
-    if score >= 0.9:
-        return "High"
-    if score >= 0.5:
-        return "Medium"
+def pick_severity() -> str:
+    from random import random
+
+    r = random()
+    cumulative = 0.0
+    for sev, w in SEVERITY_WEIGHTS:
+        cumulative += w
+        if r <= cumulative:
+            return sev
     return "Low"
 
 
-def simulate_attack(db: Session, num_events: int = 15) -> List[Alert]:
-    """Generate synthetic events and save anomalies as alerts."""
-    created_alerts: List[Alert] = []
+def simulate_attack_batch(db: Session, n: int = 20) -> int:
+    created = 0
+    for _ in range(n):
+        event_type = choice(EVENT_TYPES)
+        severity = pick_severity()
+        score = ml_model.compute_score(event_type, severity)
 
-    for _ in range(num_events):
-        event_type = random.choice(EVENT_TYPES)
-        cpu, disk_ops, net_out = _random_host_features()
+        desc_map = {
+            "brute_force_login": "Detected brute force login on host.",
+            "unauthorized_file_access": "Detected unauthorized file access on host.",
+            "privilege_escalation": "Detected privilege escalation on host.",
+            "suspicious_process": "Detected suspicious process on host.",
+            "suspicious_network_outbound": "Detected suspicious network outbound on host.",
+        }
+        description = desc_map.get(event_type, "Detected suspicious activity on host.")
 
-        score, is_malicious = hids_model.score_event(cpu, disk_ops, net_out)
-        if not is_malicious:
-            continue
-
-        severity = _severity_from_score(score)
-        description = f"Detected {event_type.replace('_', ' ')} on host."
-
-        alert = Alert(
+        alert = models.Alert(
             event_type=event_type,
             severity=severity,
-            score=round(float(score), 3),
+            score=score,
             description=description,
             timestamp=datetime.utcnow(),
         )
-
         db.add(alert)
-        created_alerts.append(alert)
+        created += 1
 
     db.commit()
-    for alert in created_alerts:
-        db.refresh(alert)
-
-    return created_alerts
+    return created
