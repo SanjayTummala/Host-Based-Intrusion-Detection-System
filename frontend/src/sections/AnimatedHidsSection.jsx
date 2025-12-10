@@ -46,12 +46,12 @@ function AnimatedHidsSection({ hasAlerts, hasHighSeverity }) {
           <div className="flow-step-label">1. Attack traffic originates</div>
         </div>
 
-        {/* Connector 1: Attacker -> Network */}
+        {/* Connector 1: Attacker -> Network (left → right arc) */}
         <div className="flow-connector">
           <div className="connector-label">Traffic entering the network</div>
           <div
             className={
-              "connector-path " +
+              "connector-path connector-arc " +
               (hasAlerts ? "connector-alert" : "connector-normal")
             }
           >
@@ -65,8 +65,8 @@ function AnimatedHidsSection({ hasAlerts, hasHighSeverity }) {
           </div>
         </div>
 
-        {/* Stage 2: Hosts & Servers */}
-        <div className="flow-stage">
+        {/* Stage 2: Hosts & Servers (organization, shifted slightly right) */}
+        <div className="flow-stage flow-stage-org">
           <div className="hids-card hosts-card">
             <div className="hosts-row">
               <div className="hids-node-small">
@@ -103,10 +103,10 @@ function AnimatedHidsSection({ hasAlerts, hasHighSeverity }) {
           </div>
         </div>
 
-        {/* Connector 2: Hosts -> HIDS */}
+        {/* Connector 2: Hosts -> HIDS (right → left arc, visually) */}
         <div className="flow-connector">
           <div className="connector-label">Host logs & events to HIDS</div>
-          <div className="connector-path connector-telemetry">
+          <div className="connector-path connector-arc connector-arc-reverse connector-telemetry">
             <span
               className={
                 "connector-packet packet-telemetry" +
@@ -116,8 +116,8 @@ function AnimatedHidsSection({ hasAlerts, hasHighSeverity }) {
           </div>
         </div>
 
-        {/* Stage 3: HIDS Sensor & Admin */}
-        <div className="flow-stage">
+        {/* Stage 3: HIDS Sensor & Admin (shifted down-right) */}
+        <div className="flow-stage flow-stage-hids">
           <div className="hids-card hids-core-card">
             <div className="hids-core-row">
               <div className="hids-node-small hids-core-node">
@@ -172,7 +172,7 @@ function AnimatedHidsSection({ hasAlerts, hasHighSeverity }) {
               </div>
             </div>
 
-            {/* Connector 3: HIDS -> Admin */}
+            {/* HIDS -> Admin telemetry */}
             <div className="admin-telemetry">
               <div className="admin-telemetry-label">
                 Alerts forwarded to console
