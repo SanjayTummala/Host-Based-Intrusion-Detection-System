@@ -1,6 +1,6 @@
 import axios from "axios";
 
-// Render backend
+// Render backend URL
 const BASE_URL =
   import.meta.env.VITE_API_BASE_URL ||
   "https://host-based-intrusion-detection-system.onrender.com";

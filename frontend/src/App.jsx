@@ -61,7 +61,10 @@ function App() {
           <button onClick={loadData} disabled={loading || attackLoading}>
             {loading ? "Refreshing..." : "Refresh Data"}
           </button>
-          <button onClick={handleSimulateAttack} disabled={attackLoading || loading}>
+          <button
+            onClick={handleSimulateAttack}
+            disabled={attackLoading || loading}
+          >
             {attackLoading ? "Simulating..." : "Simulate Attack"}
           </button>
         </div>

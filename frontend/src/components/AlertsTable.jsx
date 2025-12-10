@@ -19,12 +19,15 @@ function AlertsTable({ alerts, loading }) {
           <th>Severity</th>
           <th>Score</th>
           <th>Description</th>
-          <th>Timestamp (UTC)</th>
+          <th>Timestamp (local)</th>
         </tr>
       </thead>
       <tbody>
         {alerts.map((alert) => (
-          <tr key={alert.id} className={`severity-${alert.severity.toLowerCase()}`}>
+          <tr
+            key={alert.id}
+            className={`severity-${alert.severity.toLowerCase()}`}
+          >
             <td>{alert.id}</td>
             <td>{alert.event_type}</td>
             <td>{alert.severity}</td>

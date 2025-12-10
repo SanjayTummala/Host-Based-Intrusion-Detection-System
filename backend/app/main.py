@@ -5,6 +5,7 @@ from sqlalchemy.orm import Session
 from .database import Base, engine, get_db
 from . import models, schemas, simulate
 
+# Create tables
 Base.metadata.create_all(bind=engine)
 
 app = FastAPI(
@@ -12,8 +13,7 @@ app = FastAPI(
     version="1.0.0",
 )
 
-
-# CORS – allow frontend (GitHub Pages + local dev)
+# CORS: allow local dev + GitHub Pages
 origins = [
     "http://localhost:5173",
     "http://127.0.0.1:5173",
@@ -42,7 +42,9 @@ def get_alerts(db: Session = Depends(get_db)):
 @app.get("/metrics", response_model=schemas.Metrics)
 def get_metrics(db: Session = Depends(get_db)):
     total_alerts = db.query(models.Alert).count()
-    high_severity = db.query(models.Alert).filter(models.Alert.severity == "High").count()
+    high_severity = (
+        db.query(models.Alert).filter(models.Alert.severity == "High").count()
+    )
     return schemas.Metrics(
         total_events=total_alerts,
         total_alerts=total_alerts,

@@ -1,8 +1,7 @@
 from datetime import datetime
-from random import choice
+from random import choice, random
 from sqlalchemy.orm import Session
 from . import models, ml_model
-
 
 EVENT_TYPES = [
     "brute_force_login",
@@ -20,8 +19,6 @@ SEVERITY_WEIGHTS = [
 
 
 def pick_severity() -> str:
-    from random import random
-
     r = random()
     cumulative = 0.0
     for sev, w in SEVERITY_WEIGHTS:
@@ -33,19 +30,21 @@ def pick_severity() -> str:
 
 def simulate_attack_batch(db: Session, n: int = 20) -> int:
     created = 0
+    desc_map = {
+        "brute_force_login": "Detected brute force login on host.",
+        "unauthorized_file_access": "Detected unauthorized file access on host.",
+        "privilege_escalation": "Detected privilege escalation on host.",
+        "suspicious_process": "Detected suspicious process on host.",
+        "suspicious_network_outbound": "Detected suspicious network outbound on host.",
+    }
+
     for _ in range(n):
         event_type = choice(EVENT_TYPES)
         severity = pick_severity()
         score = ml_model.compute_score(event_type, severity)
-
-        desc_map = {
-            "brute_force_login": "Detected brute force login on host.",
-            "unauthorized_file_access": "Detected unauthorized file access on host.",
-            "privilege_escalation": "Detected privilege escalation on host.",
-            "suspicious_process": "Detected suspicious process on host.",
-            "suspicious_network_outbound": "Detected suspicious network outbound on host.",
-        }
-        description = desc_map.get(event_type, "Detected suspicious activity on host.")
+        description = desc_map.get(
+            event_type, "Detected suspicious activity on host."
+        )
 
         alert = models.Alert(
             event_type=event_type,
