@@ -46,12 +46,12 @@ function AnimatedHidsSection({ hasAlerts, hasHighSeverity }) {
           <div className="flow-step-label">1. Attack traffic originates</div>
         </div>
 
-        {/* Connector 1: Attacker -> Network (left → right arc) */}
+        {/* Connector 1: Attacker -> Network */}
         <div className="flow-connector">
           <div className="connector-label">Traffic entering the network</div>
           <div
             className={
-              "connector-path connector-arc " +
+              "connector-path " +
               (hasAlerts ? "connector-alert" : "connector-normal")
             }
           >
@@ -103,10 +103,10 @@ function AnimatedHidsSection({ hasAlerts, hasHighSeverity }) {
           </div>
         </div>
 
-        {/* Connector 2: Hosts -> HIDS (right → left arc) */}
+        {/* Connector 2: Hosts -> HIDS */}
         <div className="flow-connector">
           <div className="connector-label">Host logs & events to HIDS</div>
-          <div className="connector-path connector-arc connector-arc-reverse connector-telemetry">
+          <div className="connector-path connector-telemetry">
             <span
               className={
                 "connector-packet packet-telemetry" +
@@ -172,7 +172,7 @@ function AnimatedHidsSection({ hasAlerts, hasHighSeverity }) {
               </div>
             </div>
 
-            {/* HIDS -> Admin (can stay straight or slightly curved) */}
+            {/* Connector 3: HIDS -> Admin */}
             <div className="admin-telemetry">
               <div className="admin-telemetry-label">
                 Alerts forwarded to console
