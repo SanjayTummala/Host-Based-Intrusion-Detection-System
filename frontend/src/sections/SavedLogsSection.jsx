@@ -6,11 +6,7 @@ function SavedLogsSection({ savedLogs }) {
 
   const renderSeverityPill = (severity) => {
     const sev = severity?.toLowerCase() || "";
-    return (
-      <span className={`sev-pill sev-${sev}`}>
-        {severity}
-      </span>
-    );
+    return <span className={`sev-pill sev-${sev}`}>{severity}</span>;
   };
 
   return (
@@ -18,9 +14,8 @@ function SavedLogsSection({ savedLogs }) {
       <div className="logs-section-header">
         <h2>Saved HIDS Logs</h2>
         <p>
-          Snapshot of logs captured before the last simulation run. Severities
-          are categorized as Low, Medium, or High to help you quickly scan
-          historical activity.
+          Snapshot of host activity captured before the last simulation run.
+          Severities are grouped to quickly identify critical behavior.
         </p>
       </div>
 
@@ -52,15 +47,15 @@ function SavedLogsSection({ savedLogs }) {
           </table>
         ) : (
           <p className="logs-empty">
-            No saved logs yet. Run <strong>Simulate Attack</strong> at least once
-            to capture a snapshot, then come back to this section.
+            No saved logs yet. Run <strong>Simulate Attack</strong> at least
+            once to capture a snapshot.
           </p>
         )}
       </div>
 
       <p className="logs-footnote">
-        Logs are persisted in the HIDS backend database and this view shows a
-        snapshot from the state just before your latest attack simulation.
+        Logs are persisted in the HIDS backend database. This view shows a
+        frozen copy of events just before your latest attack simulation.
       </p>
     </div>
   );

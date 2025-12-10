@@ -7,9 +7,8 @@ function AnimatedHidsSection({ hasAlerts, hasHighSeverity }) {
       <div className="hids-header">
         <h2>HIDS Animated Topology</h2>
         <p>
-          Visual representation of an organization protected by a Host-Based
-          Intrusion Detection System. Attacker traffic is monitored and flagged
-          in real time.
+          Visual representation of an organization monitored by a Host-Based IDS.
+          Attacker traffic is observed and flagged in real time.
         </p>
       </div>
 
@@ -18,7 +17,7 @@ function AnimatedHidsSection({ hasAlerts, hasHighSeverity }) {
         <div className="hids-attacker">
           <div className="avatar attacker-avatar">👨‍💻</div>
           <div className="avatar-label">Attacker</div>
-          <div className="attacker-note">Trying to breach from outside</div>
+          <div className="attacker-note">Attempting external intrusion</div>
         </div>
 
         {/* Network boundary */}
@@ -32,14 +31,14 @@ function AnimatedHidsSection({ hasAlerts, hasHighSeverity }) {
               <div className="hids-node admin-node">
                 <div className="avatar">🧑‍💼</div>
                 <div className="node-name">Admin Console</div>
-                <div className="node-role">Security dashboard</div>
+                <div className="node-role">Security monitoring station</div>
               </div>
 
               <div className="hids-node hids-core">
                 <div className="avatar hids-logo">🛡️</div>
                 <div className="node-name">HIDS Engine</div>
                 <div className="node-role">
-                  Monitors host logs, detects anomalies
+                  Collects host logs and detects suspicious behavior
                 </div>
                 <div
                   className={`hids-pulse ${
@@ -69,7 +68,7 @@ function AnimatedHidsSection({ hasAlerts, hasHighSeverity }) {
           </div>
         </div>
 
-        {/* Animated attack path */}
+        {/* Animated attack/detection paths */}
         <div className="hids-connections">
           <div className="attack-line">
             <span className="packet" />
@@ -88,7 +87,7 @@ function AnimatedHidsSection({ hasAlerts, hasHighSeverity }) {
           <span className="legend-dot active" /> Active alerts detected
         </div>
         <div className="legend-item">
-          <span className="legend-dot danger" /> High severity detection
+          <span className="legend-dot danger" /> High severity condition
         </div>
       </div>
     </div>

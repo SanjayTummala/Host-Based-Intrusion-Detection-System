@@ -36,13 +36,12 @@ function App() {
       setMetrics(metricsData);
 
       if (baselineMaxId === null || resetBaseline) {
-        // First load or explicit reset: use current state as baseline,
-        // so no "live alerts" yet
+        // First load or reset: treat existing DB as baseline (no live alerts)
         const maxId = getMaxId(alertsData);
         setBaselineMaxId(maxId);
         setLiveAlerts([]);
       } else {
-        // Show only alerts created after baseline
+        // Only show alerts created after the last simulation baseline
         const live = alertsData.filter((a) => a.id > baselineMaxId);
         setLiveAlerts(live);
       }
@@ -55,7 +54,7 @@ function App() {
   }
 
   useEffect(() => {
-    // On first load, treat existing DB alerts as baseline
+    // On first load, we mark current alerts as baseline
     loadData({ resetBaseline: true });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -72,7 +71,7 @@ function App() {
       }
 
       await startAttack();
-      // After simulation, fetch new alerts, keep baseline from before simulation
+      // After simulation, fetch new alerts with baseline set from before simulation
       await loadData({ resetBaseline: false });
     } catch (err) {
       console.error(err);
@@ -82,129 +81,112 @@ function App() {
     }
   }
 
-  async function handleRefresh() {
-    await loadData({ resetBaseline: false });
-  }
-
   const hasHighSeverity = metrics && metrics.high_severity > 0;
 
   return (
-    <div className="app-root">
-      <aside className="app-sidebar">
-        <div className="sidebar-header">
-          <div className="sidebar-logo">HIDS</div>
-          <div className="sidebar-subtitle">Host-Based IDS</div>
-        </div>
+    <div className="page-root">
+      {/* Full-width title bar */}
+      <header className="page-header">
+        <h1>Host-Based Intrusion Detection System</h1>
+      </header>
 
-        <nav className="sidebar-nav">
-          <button
-            className={`sidebar-nav-item ${
-              activeSection === "attack" ? "active" : ""
-            }`}
-            onClick={() => setActiveSection("attack")}
-          >
-            <span className="sidebar-nav-dot" />
-            Attack Simulation
-          </button>
-
-          <button
-            className={`sidebar-nav-item ${
-              activeSection === "logs" ? "active" : ""
-            }`}
-            onClick={() => setActiveSection("logs")}
-          >
-            <span className="sidebar-nav-dot" />
-            Saved Logs
-          </button>
-
-          <button
-            className={`sidebar-nav-item ${
-              activeSection === "animation" ? "active" : ""
-            }`}
-            onClick={() => setActiveSection("animation")}
-          >
-            <span className="sidebar-nav-dot" />
-            HIDS Animation
-          </button>
-        </nav>
-
-        <div className="sidebar-footer">
-          {metrics && (
-            <div className="sidebar-metrics">
-              <div className="sidebar-metric">
-                <span className="label">Events</span>
-                <span className="value">{metrics.total_events}</span>
-              </div>
-              <div className="sidebar-metric">
-                <span className="label">Alerts</span>
-                <span className="value">{metrics.total_alerts}</span>
-              </div>
-              <div className="sidebar-metric">
-                <span className="label">High Sev</span>
-                <span className={`value ${hasHighSeverity ? "danger" : ""}`}>
-                  {metrics.high_severity}
-                </span>
-              </div>
-            </div>
-          )}
-          <div className="sidebar-status">
-            <span className="status-dot" />
-            Backend connected
+      {/* Layout: sidebar + main */}
+      <div className="app-root">
+        <aside className="app-sidebar">
+          <div className="sidebar-header">
+            <div className="sidebar-logo">🛡️</div>
+            <div className="sidebar-subtitle">HIDS Sections</div>
           </div>
-        </div>
-      </aside>
 
-      <main className="app-main">
-        <header className="app-header">
-          <div>
-            <h1>Host-Based Intrusion Detection System</h1>
-            <p>Splunk-style dashboard for host-level attack detection.</p>
-          </div>
-          <div className="header-actions">
+          <nav className="sidebar-nav">
             <button
-              className="btn secondary"
-              onClick={handleRefresh}
-              disabled={loading || attackLoading}
+              className={`sidebar-nav-item ${
+                activeSection === "attack" ? "active" : ""
+              }`}
+              onClick={() => setActiveSection("attack")}
             >
-              {loading ? "Refreshing..." : "Refresh Data"}
+              <span className="sidebar-nav-dot" />
+              Attack Simulation
             </button>
+
             <button
-              className="btn primary"
-              onClick={handleSimulateAttack}
-              disabled={attackLoading || loading}
+              className={`sidebar-nav-item ${
+                activeSection === "logs" ? "active" : ""
+              }`}
+              onClick={() => setActiveSection("logs")}
             >
-              {attackLoading ? "Simulating..." : "Simulate Attack"}
+              <span className="sidebar-nav-dot" />
+              Saved Logs
             </button>
+
+            <button
+              className={`sidebar-nav-item ${
+                activeSection === "animation" ? "active" : ""
+              }`}
+              onClick={() => setActiveSection("animation")}
+            >
+              <span className="sidebar-nav-dot" />
+              HIDS Animation
+            </button>
+          </nav>
+
+          <div className="sidebar-footer">
+            {metrics && (
+              <div className="sidebar-metrics">
+                <div className="sidebar-metric">
+                  <span className="label">Events</span>
+                  <span className="value">{metrics.total_events}</span>
+                </div>
+                <div className="sidebar-metric">
+                  <span className="label">Alerts</span>
+                  <span className="value">{metrics.total_alerts}</span>
+                </div>
+                <div className="sidebar-metric">
+                  <span className="label">High Sev</span>
+                  <span
+                    className={`value ${hasHighSeverity ? "danger" : ""}`}
+                  >
+                    {metrics.high_severity}
+                  </span>
+                </div>
+              </div>
+            )}
           </div>
-        </header>
+        </aside>
 
-        {error && <div className="error-banner">{error}</div>}
+        <main className="app-main">
+          {/* Section content */}
+          {error && <div className="error-banner">{error}</div>}
 
-        <section className="app-section">
-          {activeSection === "attack" && (
-            <AttackSimulationSection
-              liveAlerts={liveAlerts}
-              metrics={metrics}
-              loading={loading}
-            />
-          )}
+          <section className="app-section">
+            {activeSection === "attack" && (
+              <AttackSimulationSection
+                liveAlerts={liveAlerts}
+                metrics={metrics}
+                loading={loading || attackLoading}
+                onSimulate={handleSimulateAttack}
+                simulateDisabled={attackLoading || loading}
+              />
+            )}
 
-          {activeSection === "logs" && (
-            <SavedLogsSection savedLogs={savedLogs} />
-          )}
+            {activeSection === "logs" && (
+              <SavedLogsSection savedLogs={savedLogs} />
+            )}
 
-          {activeSection === "animation" && (
-            <AnimatedHidsSection
-              hasAlerts={allAlerts && allAlerts.length > 0}
-              hasHighSeverity={hasHighSeverity}
-            />
-          )}
-        </section>
+            {activeSection === "animation" && (
+              <AnimatedHidsSection
+                hasAlerts={allAlerts && allAlerts.length > 0}
+                hasHighSeverity={hasHighSeverity}
+              />
+            )}
+          </section>
+        </main>
+      </div>
 
-        <footer className="app-footer">
-          Developed by <span className="app-footer-name">Sanjay Kumar</span>
-        </footer>
-      </main>
+      {/* Full-width footer */}
+      <footer className="page-footer">
+        <span>Developed by Sanjay Kumar</span>
+      </footer>
     </div>
   );
 }

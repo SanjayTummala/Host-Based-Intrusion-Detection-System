@@ -10,7 +10,8 @@
 
 .attack-section-header h2 {
   margin: 0 0 0.3rem;
-  font-size: 1.4rem;
+  font-size: 1.5rem;
+  letter-spacing: 0.04em;
 }
 
 .attack-section-header p {
@@ -19,8 +20,14 @@
   color: #9ca3af;
 }
 
+.attack-controls-row {
+  display: flex;
+  justify-content: center;
+  margin-top: 0.2rem;
+}
+
 .attack-section-table {
-  margin-top: 0.5rem;
+  margin-top: 0.8rem;
 }
 
 .attack-section-table-header {
