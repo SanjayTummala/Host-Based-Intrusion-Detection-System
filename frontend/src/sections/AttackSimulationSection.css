@@ -1,21 +1,42 @@
 .attack-section {
   display: flex;
   flex-direction: column;
-  gap: 1.2rem;
+  gap: 1.3rem;
+}
+
+.attack-section-header {
+  text-align: center;
 }
 
 .attack-section-header h2 {
-  margin: 0 0 0.2rem;
-  font-size: 1.2rem;
+  margin: 0 0 0.3rem;
+  font-size: 1.4rem;
 }
 
 .attack-section-header p {
   margin: 0;
-  font-size: 0.85rem;
+  font-size: 0.9rem;
   color: #9ca3af;
 }
 
-.attack-section-table h3 {
-  margin: 0 0 0.6rem;
+.attack-section-table {
+  margin-top: 0.5rem;
+}
+
+.attack-section-table-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.attack-section-table-header h3 {
+  margin: 0;
   font-size: 1rem;
+}
+
+.attack-hint {
+  font-size: 0.78rem;
+  color: #9ca3af;
 }

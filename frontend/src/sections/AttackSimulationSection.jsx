@@ -3,22 +3,27 @@ import MetricsCards from "../components/MetricsCards";
 import AlertsTable from "../components/AlertsTable";
 import "./AttackSimulationSection.css";
 
-function AttackSimulationSection({ alerts, metrics, loading }) {
+function AttackSimulationSection({ liveAlerts, metrics, loading }) {
   return (
     <div className="attack-section">
       <div className="attack-section-header">
         <h2>Attack Simulation Dashboard</h2>
         <p>
-          Run synthetic attacks on your host and watch alerts and metrics update
-          in real time.
+          Launch simulated attacks and monitor new alerts generated in real time.
+          Live alerts below show only events created after the last simulation.
         </p>
       </div>
 
       <MetricsCards metrics={metrics} loading={loading} />
 
       <div className="attack-section-table">
-        <h3>Live Alerts</h3>
-        <AlertsTable alerts={alerts} loading={loading} />
+        <div className="attack-section-table-header">
+          <h3>Live Alerts</h3>
+          <span className="attack-hint">
+            Showing alerts generated after the last <strong>Simulate Attack</strong>.
+          </span>
+        </div>
+        <AlertsTable alerts={liveAlerts} loading={loading} />
       </div>
     </div>
   );

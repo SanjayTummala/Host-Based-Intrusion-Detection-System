@@ -6,31 +6,46 @@ import AnimatedHidsSection from "./sections/AnimatedHidsSection";
 import "./App.css";
 
 function App() {
-  const [alerts, setAlerts] = useState([]);
-  const [previousAlerts, setPreviousAlerts] = useState([]);
+  const [allAlerts, setAllAlerts] = useState([]);
+  const [liveAlerts, setLiveAlerts] = useState([]);
+  const [savedLogs, setSavedLogs] = useState([]);
   const [metrics, setMetrics] = useState(null);
   const [loading, setLoading] = useState(false);
   const [attackLoading, setAttackLoading] = useState(false);
   const [error, setError] = useState("");
   const [activeSection, setActiveSection] = useState("attack"); // "attack" | "logs" | "animation"
+  const [baselineMaxId, setBaselineMaxId] = useState(null); // alerts before last simulation
 
-  async function loadData() {
+  // Helper: compute max id from a list
+  function getMaxId(alerts) {
+    if (!alerts || alerts.length === 0) return 0;
+    return alerts.reduce((max, a) => (a.id > max ? a.id : max), 0);
+  }
+
+  async function loadData({ resetBaseline = false } = {}) {
     try {
       setLoading(true);
       setError("");
-
-      // Save current alerts as "previous logs" before updating
-      if (alerts && alerts.length > 0) {
-        setPreviousAlerts(alerts);
-      }
 
       const [alertsData, metricsData] = await Promise.all([
         fetchAlerts(),
         fetchMetrics(),
       ]);
 
-      setAlerts(alertsData);
+      setAllAlerts(alertsData);
       setMetrics(metricsData);
+
+      if (baselineMaxId === null || resetBaseline) {
+        // First load or explicit reset: use current state as baseline,
+        // so no "live alerts" yet
+        const maxId = getMaxId(alertsData);
+        setBaselineMaxId(maxId);
+        setLiveAlerts([]);
+      } else {
+        // Show only alerts created after baseline
+        const live = alertsData.filter((a) => a.id > baselineMaxId);
+        setLiveAlerts(live);
+      }
     } catch (err) {
       console.error(err);
       setError("Failed to load data from backend");
@@ -40,7 +55,8 @@ function App() {
   }
 
   useEffect(() => {
-    loadData();
+    // On first load, treat existing DB alerts as baseline
+    loadData({ resetBaseline: true });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -49,19 +65,25 @@ function App() {
       setAttackLoading(true);
       setError("");
 
-      // Store current alerts as previous before simulating new batch
-      if (alerts && alerts.length > 0) {
-        setPreviousAlerts(alerts);
+      // Save current alerts snapshot as "Saved Logs"
+      if (allAlerts && allAlerts.length > 0) {
+        setSavedLogs(allAlerts);
+        setBaselineMaxId(getMaxId(allAlerts));
       }
 
       await startAttack();
-      await loadData();
+      // After simulation, fetch new alerts, keep baseline from before simulation
+      await loadData({ resetBaseline: false });
     } catch (err) {
       console.error(err);
       setError("Failed to simulate attack");
     } finally {
       setAttackLoading(false);
     }
+  }
+
+  async function handleRefresh() {
+    await loadData({ resetBaseline: false });
   }
 
   const hasHighSeverity = metrics && metrics.high_severity > 0;
@@ -136,12 +158,12 @@ function App() {
         <header className="app-header">
           <div>
             <h1>Host-Based Intrusion Detection System</h1>
-            <p>Real-time attack simulation, log history, and animated topology.</p>
+            <p>Splunk-style dashboard for host-level attack detection.</p>
           </div>
           <div className="header-actions">
             <button
               className="btn secondary"
-              onClick={loadData}
+              onClick={handleRefresh}
               disabled={loading || attackLoading}
             >
               {loading ? "Refreshing..." : "Refresh Data"}
@@ -161,26 +183,27 @@ function App() {
         <section className="app-section">
           {activeSection === "attack" && (
             <AttackSimulationSection
-              alerts={alerts}
+              liveAlerts={liveAlerts}
               metrics={metrics}
               loading={loading}
             />
           )}
 
           {activeSection === "logs" && (
-            <SavedLogsSection
-              currentAlerts={alerts}
-              previousAlerts={previousAlerts}
-            />
+            <SavedLogsSection savedLogs={savedLogs} />
           )}
 
           {activeSection === "animation" && (
             <AnimatedHidsSection
-              hasAlerts={alerts && alerts.length > 0}
+              hasAlerts={allAlerts && allAlerts.length > 0}
               hasHighSeverity={hasHighSeverity}
             />
           )}
         </section>
+
+        <footer className="app-footer">
+          Developed by <span className="app-footer-name">Sanjay Kumar</span>
+        </footer>
       </main>
     </div>
   );
