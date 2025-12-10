@@ -1,87 +1,25 @@
-// src/sections/AttackSimulationSection.jsx
-import React, { useEffect, useState } from "react";
-import { fetchMetrics, startAttack } from "../api/client.js";
-import MetricsCards from "../components/MetricsCards.jsx";
-import AlertsTable from "../components/AlertsTable.jsx";
+import React from "react";
+import MetricsCards from "../components/MetricsCards";
+import AlertsTable from "../components/AlertsTable";
+import "./AttackSimulationSection.css";
 
-function AttackSimulationSection({ onAttackRun, liveAlerts }) {
-  const [metrics, setMetrics] = useState(null);
-  const [loading, setLoading] = useState(false);
-  const [toast, setToast] = useState(null);
-
-  const loadMetrics = async () => {
-    try {
-      const data = await fetchMetrics();
-      setMetrics(data);
-    } catch (err) {
-      console.error("Failed to load metrics", err);
-    }
-  };
-
-  useEffect(() => {
-    loadMetrics();
-  }, []);
-
-  const handleAttackClick = async () => {
-    setLoading(true);
-    setToast(null);
-    try {
-      const alerts = await startAttack();
-      onAttackRun(alerts);
-      setToast({
-        type: "success",
-        message: `Attack simulation complete – generated ${alerts.length} alerts.`,
-      });
-      loadMetrics();
-    } catch (err) {
-      console.error("Attack simulation failed", err);
-      setToast({
-        type: "error",
-        message: "Attack simulation failed. Please try again.",
-      });
-    } finally {
-      setLoading(false);
-      setTimeout(() => setToast(null), 3500);
-    }
-  };
-
+function AttackSimulationSection({ alerts, metrics, loading }) {
   return (
-    <div className="panel">
-      <h2 className="panel-title">Attack Laboratory</h2>
-      <p className="panel-subtitle">
-        Launch a synthetic attack sequence. The backend ML model scores each
-        event and turns anomalies into alerts that show up live below.
-      </p>
-
-      {metrics && (
-        <section>
-          <h3 className="panel-subheading">Current Metrics</h3>
-          <MetricsCards metrics={metrics} />
-        </section>
-      )}
-
-      <div className="actions-row">
-        <button
-          className="primary-btn"
-          onClick={handleAttackClick}
-          disabled={loading}
-        >
-          {loading ? "Running attack..." : "Start Attack"}
-        </button>
+    <div className="attack-section">
+      <div className="attack-section-header">
+        <h2>Attack Simulation Dashboard</h2>
+        <p>
+          Run synthetic attacks on your host and watch alerts and metrics update
+          in real time.
+        </p>
       </div>
 
-      {toast && (
-        <div
-          className={
-            toast.type === "error" ? "toast toast-error" : "toast toast-success"
-          }
-        >
-          {toast.message}
-        </div>
-      )}
+      <MetricsCards metrics={metrics} loading={loading} />
 
-      <h3 className="panel-subheading">Live Alerts</h3>
-      <AlertsTable alerts={liveAlerts} />
+      <div className="attack-section-table">
+        <h3>Live Alerts</h3>
+        <AlertsTable alerts={alerts} loading={loading} />
+      </div>
     </div>
   );
 }

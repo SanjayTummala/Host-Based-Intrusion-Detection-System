@@ -1,0 +1,97 @@
+.logs-section {
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+}
+
+.logs-section-header h2 {
+  margin: 0 0 0.3rem;
+  font-size: 1.2rem;
+}
+
+.logs-section-header p {
+  margin: 0;
+  font-size: 0.85rem;
+  color: #9ca3af;
+}
+
+.logs-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.logs-column {
+  background: #020617;
+  border-radius: 0.75rem;
+  border: 1px solid rgba(148, 163, 184, 0.4);
+  padding: 0.8rem 0.9rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.logs-column-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.logs-column-header h3 {
+  margin: 0;
+  font-size: 0.95rem;
+}
+
+.badge {
+  font-size: 0.75rem;
+  padding: 0.15rem 0.5rem;
+  border-radius: 999px;
+  background: rgba(148, 163, 184, 0.2);
+  color: #e5e7eb;
+}
+
+.logs-table-wrapper {
+  max-height: 280px;
+  overflow: auto;
+}
+
+.logs-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.78rem;
+}
+
+.logs-table th,
+.logs-table td {
+  padding: 0.35rem 0.35rem;
+  border-bottom: 1px solid rgba(31, 41, 55, 0.8);
+  text-align: left;
+}
+
+.logs-table thead {
+  background: rgba(15, 23, 42, 0.9);
+  position: sticky;
+  top: 0;
+}
+
+.logs-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.logs-empty {
+  font-size: 0.8rem;
+  color: #9ca3af;
+  margin: 0.4rem 0;
+}
+
+.logs-footnote {
+  margin: 0;
+  font-size: 0.75rem;
+  color: #6b7280;
+}
+
+@media (max-width: 900px) {
+  .logs-grid {
+    grid-template-columns: 1fr;
+  }
+}

@@ -1,0 +1,21 @@
+.attack-section {
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+}
+
+.attack-section-header h2 {
+  margin: 0 0 0.2rem;
+  font-size: 1.2rem;
+}
+
+.attack-section-header p {
+  margin: 0;
+  font-size: 0.85rem;
+  color: #9ca3af;
+}
+
+.attack-section-table h3 {
+  margin: 0 0 0.6rem;
+  font-size: 1rem;
+}

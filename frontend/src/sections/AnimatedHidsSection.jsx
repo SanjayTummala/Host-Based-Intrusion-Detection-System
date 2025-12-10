@@ -1,89 +1,95 @@
-// src/sections/AnimatedHidsSection.jsx
 import React from "react";
-import { motion } from "framer-motion";
+import "./AnimatedHidsSection.css";
 
-const systemVariant = {
-  hidden: { opacity: 0, y: 10 },
-  visible: (i) => ({
-    opacity: 1,
-    y: 0,
-    transition: { delay: 0.15 + i * 0.08 },
-  }),
-};
-
-function AnimatedHidsSection() {
-  const systems = Array.from({ length: 6 });
-
+function AnimatedHidsSection({ hasAlerts, hasHighSeverity }) {
   return (
-    <div className="panel">
-      <h2 className="panel-title">How the HIDS Pipeline Works</h2>
-      <p className="panel-subtitle">
-        This animation shows how host events flow through an intrusion detection
-        pipeline into the SOC dashboard.
-      </p>
+    <div className="hids-section">
+      <div className="hids-header">
+        <h2>HIDS Animated Topology</h2>
+        <p>
+          Visual representation of an organization protected by a Host-Based
+          Intrusion Detection System. Attacker traffic is monitored and flagged
+          in real time.
+        </p>
+      </div>
 
-      <div className="animated-layout">
-        <motion.div
-          className="animated-column"
-          initial={{ opacity: 0, x: -20 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.4 }}
-        >
-          <h3 className="animated-heading">Hosts</h3>
-          <ul className="animated-list">
-            {systems.map((_, idx) => (
-              <motion.li
-                key={idx}
-                custom={idx}
-                initial="hidden"
-                animate="visible"
-                variants={systemVariant}
-                className="animated-pill"
-              >
-                Host #{idx + 1} – syscalls, logs, metrics
-              </motion.li>
-            ))}
-          </ul>
-        </motion.div>
+      <div className="hids-topology">
+        {/* Attacker outside */}
+        <div className="hids-attacker">
+          <div className="avatar attacker-avatar">👨‍💻</div>
+          <div className="avatar-label">Attacker</div>
+          <div className="attacker-note">Trying to breach from outside</div>
+        </div>
 
-        <motion.div
-          className="animated-column"
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.1 }}
-        >
-          <h3 className="animated-heading">HIDS Engine</h3>
-          <ul className="animated-list">
-            <li className="animated-step">1. Collect host events</li>
-            <li className="animated-step">2. Extract features</li>
-            <li className="animated-step">3. ML model scores anomalies</li>
-            <li className="animated-step">4. Persist alerts to DB</li>
-          </ul>
-        </motion.div>
+        {/* Network boundary */}
+        <div className="hids-network">
+          <div className="network-border" />
 
-        <motion.div
-          className="animated-column"
-          initial={{ opacity: 0, x: 20 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.4, delay: 0.15 }}
-        >
-          <h3 className="animated-heading">SOC Dashboard</h3>
-          <div className="soc-box">
-            <p className="soc-text">
-              Analysts see alerts, severity and timing, and decide whether to
-              escalate or dismiss them.
-            </p>
-            <ul className="soc-list">
-              <li>✔ Real-time alerts from /simulate_attack</li>
-              <li>✔ Historical view in Collected Logs</li>
-              <li>✔ Metrics powered by /metrics</li>
-            </ul>
-            <div className="soc-footer">
-              In this project, your browser UI is playing the SOC dashboard
-              role.
+          <div className="hids-org">
+            <div className="org-title">Organization Network</div>
+
+            <div className="org-row">
+              <div className="hids-node admin-node">
+                <div className="avatar">🧑‍💼</div>
+                <div className="node-name">Admin Console</div>
+                <div className="node-role">Security dashboard</div>
+              </div>
+
+              <div className="hids-node hids-core">
+                <div className="avatar hids-logo">🛡️</div>
+                <div className="node-name">HIDS Engine</div>
+                <div className="node-role">
+                  Monitors host logs, detects anomalies
+                </div>
+                <div
+                  className={`hids-pulse ${
+                    hasHighSeverity ? "danger" : hasAlerts ? "active" : ""
+                  }`}
+                />
+              </div>
+            </div>
+
+            <div className="org-row users-row">
+              <div className="hids-node user-node">
+                <div className="avatar">👩‍💻</div>
+                <div className="node-name">User Workstation A</div>
+                <div className="node-role">Employee device</div>
+              </div>
+              <div className="hids-node user-node">
+                <div className="avatar">👨‍💻</div>
+                <div className="node-name">User Workstation B</div>
+                <div className="node-role">Employee device</div>
+              </div>
+              <div className="hids-node user-node">
+                <div className="avatar">🧑‍💻</div>
+                <div className="node-name">User Workstation C</div>
+                <div className="node-role">Remote user</div>
+              </div>
             </div>
           </div>
-        </motion.div>
+        </div>
+
+        {/* Animated attack path */}
+        <div className="hids-connections">
+          <div className="attack-line">
+            <span className="packet" />
+          </div>
+          <div className="detection-line">
+            <span className="packet" />
+          </div>
+        </div>
+      </div>
+
+      <div className="hids-legend">
+        <div className="legend-item">
+          <span className="legend-dot normal" /> Normal monitoring
+        </div>
+        <div className="legend-item">
+          <span className="legend-dot active" /> Active alerts detected
+        </div>
+        <div className="legend-item">
+          <span className="legend-dot danger" /> High severity detection
+        </div>
       </div>
     </div>
   );
