@@ -2,7 +2,8 @@
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  background: radial-gradient(circle at top, #111827 0, #020617 40%, #000 100%);
+  background:
+    radial-gradient(circle at top, #020617 0, #020617 45%, #000 100%);
   color: #f9fafb;
 }
 
@@ -10,19 +11,21 @@
 
 .page-header {
   width: 100%;
-  padding: 1rem 2rem;
+  padding: 0.7rem 1.5rem;
   text-align: center;
-  background: linear-gradient(90deg, #22c55e, #0ea5e9, #6366f1);
+  background: linear-gradient(90deg, #020617, #022c22, #020617);
   background-size: 200% 200%;
-  animation: headerGradient 8s ease infinite;
-  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.7);
+  animation: headerGradient 10s ease infinite;
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.8);
+  border-bottom: 1px solid rgba(15, 23, 42, 0.9);
 }
 
 .page-header h1 {
   margin: 0;
-  font-size: 1.8rem;
-  letter-spacing: 0.08em;
+  font-size: 1.35rem;          /* smaller title */
+  letter-spacing: 0.16em;      /* tighter, “security” look */
   text-transform: uppercase;
+  color: #e5fbe9;
 }
 
 /* Layout grid: sidebar + main */
@@ -37,30 +40,31 @@
 /* Sidebar */
 
 .app-sidebar {
-  border-right: 1px solid rgba(148, 163, 184, 0.25);
-  padding: 1.5rem 1.25rem;
+  border-right: 1px solid rgba(31, 41, 55, 0.9);
+  padding: 1.3rem 1.1rem;
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
-  background: linear-gradient(180deg, #020617 0%, #020617 35%, #02061700 100%);
-  backdrop-filter: blur(16px);
+  gap: 1.4rem;
+  background:
+    radial-gradient(circle at top left, #020617, #020617 45%, #02061700 100%);
+  backdrop-filter: blur(14px);
 }
 
 .sidebar-header {
   display: flex;
   flex-direction: column;
-  gap: 0.25rem;
+  gap: 0.3rem;
 }
 
 .sidebar-logo {
-  width: 42px;
-  height: 42px;
+  width: 40px;
+  height: 40px;
   border-radius: 999px;
-  background: radial-gradient(circle at 30% 0, #22c55e, #22c55e33, #0f172a);
+  background: radial-gradient(circle at 30% 0, #22c55e, #16a34a33, #020617);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.4rem;
+  font-size: 1.2rem;
 }
 
 .sidebar-subtitle {
@@ -71,15 +75,15 @@
 .sidebar-nav {
   display: flex;
   flex-direction: column;
-  gap: 0.4rem;
-  margin-top: 0.5rem;
+  gap: 0.35rem;
+  margin-top: 0.4rem;
 }
 
 .sidebar-nav-item {
   border: none;
   background: transparent;
-  padding: 0.55rem 0.65rem;
-  border-radius: 0.7rem;
+  padding: 0.5rem 0.6rem;
+  border-radius: 0.65rem;
   font-size: 0.9rem;
   color: #e5e7eb;
   display: flex;
@@ -98,12 +102,12 @@
 }
 
 .sidebar-nav-item:hover {
-  background: rgba(31, 41, 55, 0.8);
+  background: rgba(31, 41, 55, 0.85);
   transform: translateX(2px);
 }
 
 .sidebar-nav-item.active {
-  background: linear-gradient(90deg, #22c55e33, transparent);
+  background: linear-gradient(90deg, #16a34a33, transparent);
   color: #bbf7d0;
 }
 
@@ -127,10 +131,10 @@
 .sidebar-metric {
   flex: 1 1 60px;
   min-width: 0;
-  padding: 0.4rem 0.5rem;
+  padding: 0.35rem 0.45rem;
   border-radius: 0.6rem;
   background: #020617;
-  border: 1px solid rgba(148, 163, 184, 0.3);
+  border: 1px solid rgba(55, 65, 81, 0.9);
 }
 
 .sidebar-metric .label {
@@ -139,7 +143,7 @@
 }
 
 .sidebar-metric .value {
-  font-size: 1rem;
+  font-size: 0.95rem;
   font-weight: 600;
 }
 
@@ -150,10 +154,30 @@
 /* Main content */
 
 .app-main {
-  padding: 1.75rem 2rem 2rem;
+  padding: 1.4rem 1.8rem 1.8rem;
   display: flex;
   flex-direction: column;
-  gap: 1.25rem;
+  gap: 1.1rem;
+  background:
+    linear-gradient(
+      135deg,
+      rgba(15, 23, 42, 0.96),
+      rgba(15, 23, 42, 0.98)
+    ),
+    repeating-linear-gradient(
+      0deg,
+      rgba(30, 64, 175, 0.15),
+      rgba(30, 64, 175, 0.15) 1px,
+      transparent 1px,
+      transparent 10px
+    ),
+    repeating-linear-gradient(
+      90deg,
+      rgba(30, 64, 175, 0.15),
+      rgba(30, 64, 175, 0.15) 1px,
+      transparent 1px,
+      transparent 10px
+    );
 }
 
 .error-banner {
@@ -172,7 +196,7 @@
 /* Buttons */
 
 .btn {
-  padding: 0.5rem 1rem;
+  padding: 0.5rem 1.1rem;
   border-radius: 999px;
   border: none;
   cursor: pointer;
@@ -182,9 +206,9 @@
 }
 
 .btn.primary {
-  background: linear-gradient(135deg, #22c55e, #4ade80);
+  background: linear-gradient(135deg, #22c55e, #16a34a);
   color: #022c22;
-  box-shadow: 0 10px 25px rgba(34, 197, 94, 0.25);
+  box-shadow: 0 8px 22px rgba(34, 197, 94, 0.28);
 }
 
 .btn:disabled {
@@ -201,13 +225,13 @@
 
 .page-footer {
   width: 100%;
-  padding: 0.75rem 1.5rem;
+  padding: 0.6rem 1.3rem;
   text-align: center;
   font-size: 0.85rem;
   color: #e5e7eb;
-  background: linear-gradient(90deg, #0f172a, #1e293b, #0f172a);
+  background: linear-gradient(90deg, #020617, #111827, #020617);
   background-size: 200% 200%;
-  animation: footerGradient 10s linear infinite;
+  animation: footerGradient 12s linear infinite;
   border-top: 1px solid rgba(15, 23, 42, 0.9);
 }
 
