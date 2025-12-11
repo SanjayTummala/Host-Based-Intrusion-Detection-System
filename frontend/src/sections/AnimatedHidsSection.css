@@ -41,7 +41,6 @@
 /* Main */
 .hids-main { margin-top:14px; }
 
-/* stages row */
 .stages-row {
   display:flex;
   align-items:center;
@@ -52,7 +51,7 @@
 }
 
 /* Stage card */
-.stage { min-width:180px; max-width:260px; }
+.stage { min-width:180px; max-width:400px; }
 .stage-card {
   background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
   border-radius:12px;
@@ -75,13 +74,16 @@
 .connector.connector-wide { min-width:220px; display:flex; flex-direction:column; align-items:center; gap:8px; }
 .connector-label { font-size:12px; color:#92bfc8; }
 
-/* WIDE organization layout (spacious) */
-.wide-organization .stage-card.wide { padding:16px; }
-.hosts-grid-wide {
-  display:grid;
-  grid-template-columns: repeat(3, 1fr);
+/* ORGANIZATION: two-row wide layout */
+/* First row: three user nodes (horizontal) */
+/* Second row: two servers centered */
+.organization-wide .stage-card.wide { padding:16px; }
+.hosts-grid-row1 {
+  display:flex;
   gap:14px;
-  align-items:start;
+  justify-content:space-between;
+  align-items:flex-start;
+  margin-bottom:12px;
 }
 .host-node.large {
   display:flex;
@@ -94,16 +96,23 @@
   background: linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.00));
   border:1px solid rgba(255,255,255,0.02);
   min-height:88px;
+  width:30%;
   box-shadow: 0 8px 22px rgba(0,0,0,0.3);
 }
 .host-node .host-icon { font-size:22px; }
 .host-name { font-size:13px; color:#e6faff; }
 
-/* servers span columns to remain prominent */
-.host-node.server { grid-column: span 2; justify-self:center; }
+/* second row servers centered */
+.hosts-grid-row2 {
+  display:flex;
+  gap:14px;
+  justify-content:center;
+  align-items:center;
+}
+.host-node.server { width:40%; }
 
 /* hosts note */
-.hosts-note { margin-top:10px; color:#9dbdc6; font-size:12px; }
+.hosts-note { margin-top:10px; color:#9dbdc6; font-size:12px; text-align:center; }
 
 /* Stream line base */
 .stream-line {
@@ -162,10 +171,11 @@
   100% { left:calc(100% + 14px); opacity:0; transform:translateY(-50%) scale(0.9); }
 }
 
-/* Stage 3 split: HIDS system + Admin (side-by-side on wide screens) */
-.split-stage .hids-admin-row { display:flex; gap:12px; align-items:flex-start; }
-.hids-system-card { flex:1 1 220px; }
-.admin-card { flex:1 1 220px; }
+/* Stage 3 outer single box with two inner cards */
+.stage3-outer { padding:12px; }
+.stage3-inner { display:flex; gap:12px; align-items:flex-start; }
+/* inner-card styles */
+.inner-card { flex:1; padding:12px; background: linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.00)); border-radius:8px; border:1px solid rgba(255,255,255,0.02); box-shadow:0 8px 22px rgba(0,0,0,0.28); }
 
 /* Admin vertical alerts */
 .admin-body-vertical { display:flex; flex-direction:column; gap:8px; margin-top:10px; }
@@ -190,9 +200,10 @@
 
 /* responsive */
 @media (max-width:1200px) {
-  .hosts-grid-wide { grid-template-columns: repeat(2, 1fr); }
-  .host-node.server { grid-column: span 2; }
-  .split-stage .hids-admin-row { flex-direction:column; }
+  .hosts-grid-row1 { gap:12px; }
+  .hosts-grid-row2 { gap:12px; }
+  .stage3-inner { flex-direction:column; }
+  .host-node.server { width:60%; }
 }
 @media (max-width:960px) {
   .stages-row { flex-direction:column; gap:14px; overflow-y:auto; }
@@ -201,5 +212,4 @@
   .hids-header { flex-direction:column; align-items:stretch; gap:8px; }
   .hids-header-center { justify-content:flex-start; }
   .hids-status { justify-content:flex-start; }
-  .hosts-grid-wide { grid-template-columns: repeat(2,1fr); gap:12px; }
 }

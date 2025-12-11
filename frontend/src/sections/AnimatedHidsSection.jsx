@@ -2,7 +2,11 @@ import React from "react";
 import "./AnimatedHidsSection.css";
 
 /**
- * 3-stage HIDS animation (wide grid + split HIDS/Admin + vertical alerts)
+ * 3-stage HIDS animation
+ * - Stage1: External Attacker
+ * - Stage2: Organization (row1: users A/B/C, row2: App & DB centered)
+ * - Stage3: Single big Stage box containing HIDS System (left) and Security Admin (right)
+ *
  * Props:
  *  - hasAlerts (bool)
  *  - hasHighSeverity (bool)
@@ -27,7 +31,7 @@ export default function AnimatedHidsSection({ hasAlerts = false, hasHighSeverity
       <span key={n} className={`malicious-packet m-${n} ${hasHighSeverity ? "visible" : ""}`} aria-hidden="true" />
     ));
 
-  // sample counts (you can wire these to real backend)
+  // Placeholder counts (wire to API as needed)
   const counts = {
     normal: 120,
     suspicious: hasAlerts && !hasHighSeverity ? 3 : 0,
@@ -95,10 +99,10 @@ export default function AnimatedHidsSection({ hasAlerts = false, hasHighSeverity
             <div className="connector-label">Traffic → Organization</div>
           </div>
 
-          {/* Stage 2: Hosts & Servers (WIDE GRID) */}
-          <div className="stage stage-2 wide-organization">
+          {/* Stage 2: Organization (WIDE GRID with two rows) */}
+          <div className="stage stage-2 organization-wide">
             <div className="stage-card hosts-card wide">
-              <div className="hosts-grid-wide">
+              <div className="hosts-grid-row1">
                 <div className="host-node large">
                   <div className="host-icon">👩‍💻</div>
                   <div className="host-name">Alice — HR</div>
@@ -111,22 +115,24 @@ export default function AnimatedHidsSection({ hasAlerts = false, hasHighSeverity
                   <div className="host-icon">🧑‍💻</div>
                   <div className="host-name">Charlie — Dev</div>
                 </div>
+              </div>
 
-                <div className="host-node server large">
+              <div className="hosts-grid-row2">
+                <div className="host-node server large server-centered">
                   <div className="host-icon">🖥️</div>
                   <div className="host-name">App Server</div>
                 </div>
-                <div className="host-node server large">
+                <div className="host-node server large server-centered">
                   <div className="host-icon">💾</div>
                   <div className="host-name">DB Server</div>
                 </div>
               </div>
 
-              <div className="hosts-note">Large spaced endpoints with local HIDS agents — clearer layout, not congested.</div>
+              <div className="hosts-note">Spacious layout: users in first row, servers centered on second row.</div>
             </div>
           </div>
 
-          {/* Connector 2 -> 3 (malicious overlay possible) */}
+          {/* Connector 2 -> 3 */}
           <div className="connector connector-wide">
             <div className={`stream-line ${streamState} stream-2`} aria-hidden="true">
               {renderPackets()}
@@ -135,64 +141,67 @@ export default function AnimatedHidsSection({ hasAlerts = false, hasHighSeverity
             <div className="connector-label">Telemetry → HIDS Collector</div>
           </div>
 
-          {/* Stage 3: Split HIDS System (left) & Security Admin (right) */}
-          <div className="stage stage-3 split-stage">
-            <div className="hids-admin-row">
-              <div className="hids-system-card stage-card">
-                <div className="admin-top">
-                  <div className="admin-icon">🛡️</div>
-                  <div>
-                    <div className="stage-title">HIDS System</div>
-                    <div className="stage-desc small-pt">Collector & correlator — aggregates host telemetry.</div>
+          {/* Stage 3: SINGLE BIG BOX containing HIDS System (left) and Security Admin (right) */}
+          <div className="stage stage-3">
+            <div className="stage-card stage3-outer">
+              <div className="stage3-inner">
+                <div className="hids-system-card inner-card">
+                  <div className="admin-top">
+                    <div className="admin-icon">🛡️</div>
+                    <div>
+                      <div className="stage-title">HIDS System</div>
+                      <div className="stage-desc small-pt">Collector & correlator — aggregates host telemetry.</div>
+                    </div>
+                  </div>
+
+                  <div className="hids-body">
+                    <div className="hids-stats">
+                      <div className="stat-item"><strong>Agents:</strong> 125</div>
+                      <div className="stat-item"><strong>Events/hr:</strong> 420</div>
+                      <div className="stat-item"><strong>Avg latency:</strong> 0.8s</div>
+                    </div>
                   </div>
                 </div>
 
-                <div className="hids-body">
-                  <div className="hids-stats">
-                    <div className="stat-item"><strong>Agents:</strong> 125</div>
-                    <div className="stat-item"><strong>Events/hr:</strong> 420</div>
-                    <div className="stat-item"><strong>Avg latency:</strong> 0.8s</div>
-                  </div>
-                </div>
-              </div>
-
-              <div className="admin-card stage-card">
-                <div className="admin-top">
-                  <div className="admin-icon">👨‍💼</div>
-                  <div>
-                    <div className="stage-title">Security Admin</div>
-                    <div className="stage-desc small-pt">Vertical alert list — click to inspect an incident.</div>
-                  </div>
-                </div>
-
-                <div className="admin-body-vertical">
-                  <div className={`alert-row alert-normal ${!hasAlerts && !hasHighSeverity ? "highlight" : ""}`}>
-                    <div className="alert-dot normal" /> <div className="alert-label">Normal</div>
-                    <div className="alert-count">{counts.normal}</div>
+                <div className="admin-card inner-card">
+                  <div className="admin-top">
+                    <div className="admin-icon">👨‍💼</div>
+                    <div>
+                      <div className="stage-title">Security Admin</div>
+                      <div className="stage-desc small-pt">Vertical alert list — click to inspect an incident.</div>
+                    </div>
                   </div>
 
-                  <div className={`alert-row alert-suspicious ${hasAlerts && !hasHighSeverity ? "highlight pulse" : ""}`}>
-                    <div className="alert-dot suspicious" /> <div className="alert-label">Suspicious</div>
-                    <div className="alert-count">{counts.suspicious}</div>
-                  </div>
+                  <div className="admin-body-vertical">
+                    <div className={`alert-row alert-normal ${!hasAlerts && !hasHighSeverity ? "highlight" : ""}`}>
+                      <div className="alert-dot normal" /> <div className="alert-label">Normal</div>
+                      <div className="alert-count">{counts.normal}</div>
+                    </div>
 
-                  <div className={`alert-row alert-critical ${hasHighSeverity ? "highlight pulse-strong" : ""}`}>
-                    <div className="alert-dot critical" /> <div className="alert-label">Critical</div>
-                    <div className="alert-count">{counts.critical}</div>
-                  </div>
+                    <div className={`alert-row alert-suspicious ${hasAlerts && !hasHighSeverity ? "highlight pulse" : ""}`}>
+                      <div className="alert-dot suspicious" /> <div className="alert-label">Suspicious</div>
+                      <div className="alert-count">{counts.suspicious}</div>
+                    </div>
 
-                  <div className="admin-note small-pt">Alerts show vertically and reflect stream state in real time.</div>
+                    <div className={`alert-row alert-critical ${hasHighSeverity ? "highlight pulse-strong" : ""}`}>
+                      <div className="alert-dot critical" /> <div className="alert-label">Critical</div>
+                      <div className="alert-count">{counts.critical}</div>
+                    </div>
+
+                    <div className="admin-note small-pt">Alerts show vertically and reflect stream state in real time.</div>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
+
         </div>
 
         <div className="flow-notes">
           <strong>Legend:</strong>
           <ul>
             <li>Telemetry (2 → 3): teal/green normal; amber suspicious; red critical (overlay).</li>
-            <li>Admin badges list alerts vertically (normal / suspicious / critical).</li>
+            <li>Admin alerts list vertically inside the stage-3 box.</li>
           </ul>
         </div>
       </div>
