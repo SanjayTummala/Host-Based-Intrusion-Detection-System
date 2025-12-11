@@ -1,212 +1,131 @@
-import React, { useState } from "react";
+import React from "react";
 import "./AnimatedHidsSection.css";
 
-const HOSTS = [
-  { id: "A", name: "User A", desc: "HR workstation", emoji: "👩‍💻" },
-  { id: "B", name: "User B", desc: "Finance workstation", emoji: "👨‍💻" },
-  { id: "C", name: "User C", desc: "Remote employee", emoji: "🧑‍💻" },
-];
+/**
+ * 4-stage straight left->right flow with visible moving packets on each connector.
+ * Props:
+ *  - hasAlerts (bool)
+ *  - hasHighSeverity (bool)
+ */
 
-export default function AnimatedHidsSection({
-  hasAlerts = false,
-  hasHighSeverity = false,
-}) {
-  const [view, setView] = useState("aggregate"); // "aggregate" | "host"
-
+export default function AnimatedHidsSection({ hasAlerts = false, hasHighSeverity = false }) {
   const statusText = hasHighSeverity
     ? "High severity alerts detected"
     : hasAlerts
     ? "Active alerts detected"
-    : "Monitoring organization in real time";
+    : "Monitoring in real time";
 
-  const statusClass = hasHighSeverity
-    ? "status-chip danger"
-    : hasAlerts
-    ? "status-chip active"
-    : "status-chip normal";
+  // class applied to stream lines & packets
+  const streamClass = hasHighSeverity ? "critical" : hasAlerts ? "alert" : "normal";
+
+  // create packet nodes (3 packets gives continuous flow)
+  const renderPackets = (prefix = "") =>
+    [1, 2, 3].map((n) => (
+      <span key={n} className={`stream-packet packet-${n} ${streamClass}`} aria-hidden="true" />
+    ));
 
   return (
-    <div className="hids-section">
-      <div className="hids-header-row">
-        <div>
-          <h2 className="hids-title">Host-Based Intrusion Detection System</h2>
-          <p className="hids-sub">
-            Visual flow showing how traffic enters the org, how host agents
-            detect anomalies locally, and how telemetry is aggregated to the
-            central collector and admin console.
-          </p>
-        </div>
-
-        <div className="right-controls">
-          <div className="view-toggle" role="tablist" aria-label="View toggle">
-            <button
-              className={view === "aggregate" ? "toggle-btn active" : "toggle-btn"}
-              onClick={() => setView("aggregate")}
-              aria-pressed={view === "aggregate"}
-            >
-              Aggregate
-            </button>
-            <button
-              className={view === "host" ? "toggle-btn active" : "toggle-btn"}
-              onClick={() => setView("host")}
-              aria-pressed={view === "host"}
-            >
-              Host
-            </button>
+    <section className="hids-section-wrapper" aria-labelledby="hids-title">
+      <header className="hids-header">
+        <div className="hids-header-center">
+          <div className="hids-shield" aria-hidden="true" title="HIDS">
+            <svg viewBox="0 0 100 100" className="shield-svg" role="img" aria-hidden="true">
+              <defs>
+                <linearGradient id="g1" x1="0" x2="1">
+                  <stop offset="0" stopColor="#0ea5e9" />
+                  <stop offset="1" stopColor="#06b6d4" />
+                </linearGradient>
+              </defs>
+              <path d="M50 5 L85 20 L85 45 C85 70 65 88 50 95 C35 88 15 70 15 45 L15 20 Z" fill="url(#g1)" stroke="#083344" strokeWidth="2"/>
+              <text x="50" y="58" textAnchor="middle" fontSize="36" fontFamily="Arial" fill="#041826" fontWeight="700">H</text>
+            </svg>
           </div>
 
-          <div className={`${statusClass} status-text`}>{statusText}</div>
+          <div className="hids-title-area">
+            <h1 id="hids-title" className="hids-title">Host-Based Intrusion Detection System</h1>
+            <p className="hids-subtitle">Real-time host telemetry, detection and alerting — visualized end-to-end.</p>
+          </div>
+        </div>
+
+        <div className="hids-status">
+          <div className={hasHighSeverity ? "status danger" : hasAlerts ? "status active" : "status normal"}>
+            {statusText}
+          </div>
+        </div>
+      </header>
+
+      <div className="hids-main">
+        <div className="stages-row">
+          {/* Stage 1 */}
+          <div className="stage stage-1">
+            <div className="stage-card">
+              <div className="stage-icon">👨‍💻</div>
+              <div className="stage-title">1 — External Attacker</div>
+              <div className="stage-desc">Attacker originates malicious traffic: scanning, brute-force, exploit attempts.</div>
+            </div>
+          </div>
+
+          {/* Connector 1 → 2 */}
+          <div className="connector">
+            <div className={`stream-line ${streamClass} stream-1`} aria-hidden="true">
+              {renderPackets("s1")}
+            </div>
+            <div className="connector-label">Traffic → Perimeter</div>
+          </div>
+
+          {/* Stage 2 */}
+          <div className="stage stage-2">
+            <div className="stage-card">
+              <div className="stage-icon">🛡️</div>
+              <div className="stage-title">2 — Perimeter / Edge</div>
+              <div className="stage-desc">Edge devices and network perimeter: first contact, filtering & routing to hosts.</div>
+            </div>
+          </div>
+
+          {/* Connector 2 → 3 */}
+          <div className="connector">
+            <div className={`stream-line ${streamClass} stream-2`} aria-hidden="true">
+              {renderPackets("s2")}
+            </div>
+            <div className="connector-label">Traffic → Hosts</div>
+          </div>
+
+          {/* Stage 3 */}
+          <div className="stage stage-3">
+            <div className="stage-card">
+              <div className="stage-icon">💻</div>
+              <div className="stage-title">3 — Hosts & Servers</div>
+              <div className="stage-desc">Host agents run on each host: process monitoring, filesystem checks, log analysis.</div>
+            </div>
+          </div>
+
+          {/* Connector 3 → 4 */}
+          <div className="connector">
+            <div className={`stream-line ${streamClass} stream-3`} aria-hidden="true">
+              {renderPackets("s3")}
+            </div>
+            <div className="connector-label">Telemetry → HIDS Collector</div>
+          </div>
+
+          {/* Stage 4 */}
+          <div className="stage stage-4">
+            <div className="stage-card">
+              <div className="stage-icon">🏢</div>
+              <div className="stage-title">4 — HIDS Collector & Admin</div>
+              <div className="stage-desc">Collector aggregates host telemetry, correlates alerts, and notifies security admins.</div>
+            </div>
+          </div>
+        </div>
+
+        <div className="flow-notes">
+          <strong>How to read this flow:</strong>
+          <ul>
+            <li>Streams are continuous left→right flows: attacker → perimeter → hosts → collector.</li>
+            <li>Host agents run locally on each host (detection happens at host level) and forward telemetry to the collector.</li>
+            <li>Stream color & speed indicate severity: normal (soft blue), alert (green), critical (red and faster).</li>
+          </ul>
         </div>
       </div>
-
-      <div className="hids-flow diagonal-layout">
-        {/* Stage 1: Attacker */}
-        <div className="flow-stage stage-attacker">
-          <div className="hids-card attacker-card">
-            <div className="card-top">
-              <div className="hids-avatar hids-avatar-attacker">👨‍💻</div>
-              <div>
-                <div className="hids-card-title">External Attacker</div>
-                <div className="hids-card-subtitle">Sends malicious traffic</div>
-              </div>
-            </div>
-
-            <ul className="hids-card-list short">
-              <li>Probing / brute-force attempts</li>
-              <li>Exploit & lateral movement attempts</li>
-            </ul>
-          </div>
-
-          <div className="flow-step-label">1. Attack originates</div>
-        </div>
-
-        {/* Connector 1: Attacker -> Hosts (curved L→R) */}
-        <div className="flow-connector connector-arc-wrap">
-          <div
-            className={
-              "connector-path connector-arc " + (hasAlerts ? "connector-alert" : "connector-normal")
-            }
-            aria-hidden="true"
-          >
-            <span
-              className={
-                "connector-packet " +
-                (hasAlerts ? "packet-alert" : "packet-normal") +
-                (hasHighSeverity ? " packet-fast" : "")
-              }
-            />
-          </div>
-          <div className="connector-label">Traffic entering network</div>
-        </div>
-
-        {/* Stage 2: Organization (shifted right) */}
-        <div className="flow-stage flow-stage-org">
-          <div className="hids-card hosts-card">
-            <div className="hosts-row">
-              {HOSTS.map((h) => (
-                <div key={h.id} className="hids-node-small node-with-agent" role="group" aria-label={h.name}>
-                  <div className="hids-node-icon" aria-hidden="true">{h.emoji}</div>
-                  <div className="hids-node-title">{h.name}</div>
-                  <div className="hids-node-subtitle">{h.desc}</div>
-
-                  {/* Agent badge (always shown) */}
-                  <div className="agent-badge" title="HIDS agent running" aria-hidden="true">
-                    🛡️
-                  </div>
-
-                  {/* Host → collector telemetry packet (only in host view or when alerts exist) */}
-                  {(view === "host" || hasAlerts) && (
-                    <div className={"agent-to-collector " + (hasAlerts ? "agent-active" : "")}>
-                      <span className={"agent-packet " + (hasHighSeverity ? "fast" : "")} />
-                    </div>
-                  )}
-                </div>
-              ))}
-            </div>
-
-            <div className="hosts-row servers-row">
-              <div className="hids-node-small">
-                <div className="hids-node-icon">🖥️</div>
-                <div className="hids-node-title">App Server</div>
-                <div className="hids-node-subtitle">Business logic</div>
-              </div>
-              <div className="hids-node-small">
-                <div className="hids-node-icon">💾</div>
-                <div className="hids-node-title">DB Server</div>
-                <div className="hids-node-subtitle">Critical data</div>
-              </div>
-            </div>
-          </div>
-
-          <div className="flow-step-label">2. Hosts & servers observe traffic</div>
-        </div>
-
-        {/* Connector 2: Hosts -> HIDS collector (curved R→L) */}
-        <div className="flow-connector connector-arc-wrap">
-          <div
-            className={"connector-path connector-arc connector-arc-reverse connector-telemetry"}
-            aria-hidden="true"
-          >
-            <span
-              className={
-                "connector-packet packet-telemetry " +
-                ((view === "host" || hasAlerts) ? "packet-bright" : "")
-              }
-            />
-          </div>
-          <div className="connector-label">Host logs & telemetry → collector</div>
-        </div>
-
-        {/* Stage 3: Collector + Admin (down-right shift) */}
-        <div className="flow-stage flow-stage-hids">
-          <div className="hids-card hids-core-card">
-            <div className="card-top">
-              <div className="hids-node-small hids-core-node">
-                <div className="hids-node-icon hids-core-icon">🛡️</div>
-                <div className="hids-node-title">HIDS Collector</div>
-                <div className="hids-node-subtitle">Aggregates host telemetry</div>
-                <div className={"hids-core-pulse " + (hasHighSeverity ? "danger" : hasAlerts ? "active" : "normal")} />
-              </div>
-
-              <div className="hids-node-small admin-node">
-                <div className="hids-node-icon">🧑‍💼</div>
-                <div className="hids-node-title">Security Admin</div>
-                <div className="hids-node-subtitle">Investigates alerts</div>
-
-                <div className="mini-dashboard">
-                  <div className="mini-bar-row">
-                    <div className="mini-bar-label">Normal</div>
-                    <div className="mini-bar-track"><div className="mini-bar-fill normal" /></div>
-                  </div>
-                  <div className="mini-bar-row">
-                    <div className="mini-bar-label">Suspicious</div>
-                    <div className="mini-bar-track"><div className="mini-bar-fill active" /></div>
-                  </div>
-                  <div className="mini-bar-row">
-                    <div className="mini-bar-label">Critical</div>
-                    <div className="mini-bar-track"><div className={"mini-bar-fill danger " + (hasHighSeverity ? "pulse" : "")} /></div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div className="admin-telemetry">
-              <div className="admin-telemetry-label">Alerts forwarded to console</div>
-              <div className="admin-telemetry-line">
-                <span className={"admin-telemetry-packet " + ((hasAlerts || hasHighSeverity) ? "bright" : "")} />
-              </div>
-            </div>
-          </div>
-
-          <div className="flow-step-label">3. Collector analyzes & notifies admin</div>
-        </div>
-      </div>
-
-      <div className="hids-legend" role="list">
-        <div className="legend-item" role="listitem"><span className="legend-dot legend-normal" /> Attacker traffic</div>
-        <div className="legend-item" role="listitem"><span className="legend-dot legend-telemetry" /> Host telemetry</div>
-        <div className="legend-item" role="listitem"><span className="legend-dot legend-danger" /> Malicious / high severity</div>
-      </div>
-    </div>
+    </section>
   );
 }
