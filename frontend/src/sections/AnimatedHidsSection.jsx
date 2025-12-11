@@ -2,10 +2,7 @@ import React from "react";
 import "./AnimatedHidsSection.css";
 
 /**
- * 3-stage HIDS animation
- * - Stage1: External Attacker
- * - Stage2: Organization (row1: users A/B/C, row2: App & DB centered)
- * - Stage3: Single big Stage box containing HIDS System (left) and Security Admin (right)
+ * Updated: horizontal, resized stages, attacker in red circle, simple "Logs" label.
  *
  * Props:
  *  - hasAlerts (bool)
@@ -31,7 +28,6 @@ export default function AnimatedHidsSection({ hasAlerts = false, hasHighSeverity
       <span key={n} className={`malicious-packet m-${n} ${hasHighSeverity ? "visible" : ""}`} aria-hidden="true" />
     ));
 
-  // Placeholder counts (wire to API as needed)
   const counts = {
     normal: 120,
     suspicious: hasAlerts && !hasHighSeverity ? 3 : 0,
@@ -39,7 +35,7 @@ export default function AnimatedHidsSection({ hasAlerts = false, hasHighSeverity
   };
 
   return (
-    <section className="hids-section-wrapper" aria-labelledby="hids-title">
+    <section className="hids-section-wrapper horizontal-layout" aria-labelledby="hids-title">
       <header className="hids-header">
         <div className="hids-header-center">
           <div className="hids-shield" aria-hidden="true" title="HIDS shield">
@@ -51,13 +47,13 @@ export default function AnimatedHidsSection({ hasAlerts = false, hasHighSeverity
                 </linearGradient>
               </defs>
               <path d="M60 8 L95 22 V50 C95 78 78 100 60 111 C42 100 25 78 25 50 V22 Z" fill="url(#sG)" stroke="#042033" strokeWidth="2"/>
-              <text x="60" y="66" textAnchor="middle" fontSize="28" fontFamily="Verdana" fill="#021826" fontWeight="700">HIDS</text>
+              <text x="60" y="66" textAnchor="middle" fontSize="22" fontFamily="Verdana" fill="#021826" fontWeight="700">HIDS</text>
             </svg>
           </div>
 
           <div className="hids-title-area">
             <h1 id="hids-title" className="hids-title">Host-Based Intrusion Detection System</h1>
-            <p className="hids-subtitle">Real-time host telemetry, detection and alerting — visualized end-to-end.</p>
+            <p className="hids-subtitle">Real-time host logs, detection and alerting — visualized end-to-end.</p>
           </div>
         </div>
 
@@ -70,95 +66,92 @@ export default function AnimatedHidsSection({ hasAlerts = false, hasHighSeverity
 
       <div className="hids-main">
         <div className="stages-row">
-          {/* Stage 1: Attacker */}
-          <div className="stage stage-1">
-            <div className="stage-card attacker-card">
+
+          {/* Stage 1: External Attacker (red circle icon, no number) */}
+          <div className="stage stage-1 small-stage">
+            <div className="stage-card attacker-card compact">
               <div className="attacker-top">
-                <div className="attacker-avatar">👨‍💻</div>
+                <div className="attacker-avatar attacker-red">👨‍💻</div>
                 <div style={{minWidth:0}}>
-                  <div className="stage-title">1 — External Attacker</div>
-                  <div className="stage-desc small-pt">Human attacker with laptop. Typical actions:</div>
+                  <div className="stage-title">External Attacker</div>
+                  <div className="stage-desc small-pt">Malicious host outside the org.</div>
                 </div>
               </div>
 
-              <div className="stage-desc">
-                <ul>
-                  <li>Scan & reconnaissance</li>
-                  <li>Brute-force / credential stuffing</li>
-                  <li>Exploit delivery & data exfiltration</li>
-                </ul>
+              <div className="stage-desc small-pt">
+                <em>Key points in legend — see below.</em>
               </div>
             </div>
           </div>
 
           {/* Connector 1 -> 2 */}
-          <div className="connector connector-wide">
+          <div className="connector connector-narrow">
             <div className={`stream-line ${streamState} stream-1`} aria-hidden="true">
               {renderPackets()}
             </div>
             <div className="connector-label">Traffic → Organization</div>
           </div>
 
-          {/* Stage 2: Organization (WIDE GRID with two rows) */}
-          <div className="stage stage-2 organization-wide">
-            <div className="stage-card hosts-card wide">
-              <div className="hosts-grid-row1">
-                <div className="host-node large">
+          {/* Stage 2: Organization (users in first row; app & db centered second row) */}
+          <div className="stage stage-2 medium-stage">
+            <div className="stage-card hosts-card compact">
+              <div className="hosts-grid-row1 horizontal-users">
+                <div className="host-node compact">
                   <div className="host-icon">👩‍💻</div>
                   <div className="host-name">Alice — HR</div>
                 </div>
-                <div className="host-node large">
+                <div className="host-node compact">
                   <div className="host-icon">👨‍💻</div>
                   <div className="host-name">Bob — Finance</div>
                 </div>
-                <div className="host-node large">
+                <div className="host-node compact">
                   <div className="host-icon">🧑‍💻</div>
                   <div className="host-name">Charlie — Dev</div>
                 </div>
               </div>
 
-              <div className="hosts-grid-row2">
-                <div className="host-node server large server-centered">
+              <div className="hosts-grid-row2 servers-centered">
+                <div className="host-node server compact server-centered">
                   <div className="host-icon">🖥️</div>
                   <div className="host-name">App Server</div>
                 </div>
-                <div className="host-node server large server-centered">
+                <div className="host-node server compact server-centered">
                   <div className="host-icon">💾</div>
                   <div className="host-name">DB Server</div>
                 </div>
               </div>
-
-              <div className="hosts-note">Spacious layout: users in first row, servers centered on second row.</div>
             </div>
           </div>
 
-          {/* Connector 2 -> 3 */}
-          <div className="connector connector-wide">
+          {/* Connector 2 -> 3 (label uses simple word "Logs") */}
+          <div className="connector connector-narrow">
             <div className={`stream-line ${streamState} stream-2`} aria-hidden="true">
               {renderPackets()}
               <div className="malicious-overlay">{renderMaliciousPackets()}</div>
             </div>
-            <div className="connector-label">Telemetry → HIDS Collector</div>
+            <div className="connector-label">Logs → HIDS Collector</div>
           </div>
 
-          {/* Stage 3: SINGLE BIG BOX containing HIDS System (left) and Security Admin (right) */}
-          <div className="stage stage-3">
-            <div className="stage-card stage3-outer">
+          {/* Stage 3: Single big outer box that contains HIDS System (left) and Security Admin (right) */}
+          <div className="stage stage-3 large-stage">
+            <div className="stage-card stage3-outer compact-outer">
+              <div className="stage-title stage3-title">HIDS Collector & Security Console</div>
+
               <div className="stage3-inner">
                 <div className="hids-system-card inner-card">
                   <div className="admin-top">
                     <div className="admin-icon">🛡️</div>
                     <div>
-                      <div className="stage-title">HIDS System</div>
-                      <div className="stage-desc small-pt">Collector & correlator — aggregates host telemetry.</div>
+                      <div className="stage-title small">HIDS System</div>
+                      <div className="stage-desc small-pt">Collector, correlator, model inference.</div>
                     </div>
                   </div>
 
-                  <div className="hids-body">
+                  <div className="hids-body small-pt">
                     <div className="hids-stats">
                       <div className="stat-item"><strong>Agents:</strong> 125</div>
                       <div className="stat-item"><strong>Events/hr:</strong> 420</div>
-                      <div className="stat-item"><strong>Avg latency:</strong> 0.8s</div>
+                      <div className="stat-item"><strong>Latency:</strong> 0.8s</div>
                     </div>
                   </div>
                 </div>
@@ -167,8 +160,8 @@ export default function AnimatedHidsSection({ hasAlerts = false, hasHighSeverity
                   <div className="admin-top">
                     <div className="admin-icon">👨‍💼</div>
                     <div>
-                      <div className="stage-title">Security Admin</div>
-                      <div className="stage-desc small-pt">Vertical alert list — click to inspect an incident.</div>
+                      <div className="stage-title small">Security Admin</div>
+                      <div className="stage-desc small-pt">Vertical alert list — click to inspect.</div>
                     </div>
                   </div>
 
@@ -188,7 +181,7 @@ export default function AnimatedHidsSection({ hasAlerts = false, hasHighSeverity
                       <div className="alert-count">{counts.critical}</div>
                     </div>
 
-                    <div className="admin-note small-pt">Alerts show vertically and reflect stream state in real time.</div>
+                    <div className="admin-note small-pt">Alerts are vertical inside the single stage-3 box and sync with the packet flow.</div>
                   </div>
                 </div>
               </div>
@@ -198,10 +191,13 @@ export default function AnimatedHidsSection({ hasAlerts = false, hasHighSeverity
         </div>
 
         <div className="flow-notes">
-          <strong>Legend:</strong>
+          <strong>Legend & key points:</strong>
           <ul>
-            <li>Telemetry (2 → 3): teal/green normal; amber suspicious; red critical (overlay).</li>
-            <li>Admin alerts list vertically inside the stage-3 box.</li>
+            <li><span className="legend-dot legend-attacker" /> Attacker (red circle) — source of malicious traffic.</li>
+            <li><span className="legend-dot legend-host" /> Host endpoints — local HIDS agents run here.</li>
+            <li><span className="legend-dot legend-server" /> Critical servers (App / DB).</li>
+            <li><span className="legend-dot legend-normal" /> Packet color shows stream severity: normal / suspicious / critical.</li>
+            <li>Connectors labelled simply as "Traffic" or "Logs" for readability.</li>
           </ul>
         </div>
       </div>
