@@ -78,6 +78,34 @@
   align-items: center;
 }
 
+/* Specific Stage 3 outer box overrides (bigger and shows the big box) */
+.stage3-box {
+  width: 360px; /* bigger to contain two inner boxes */
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* Inner container for the two boxes inside stage 3 */
+.stage3-inner {
+  display: flex;
+  gap: 12px;
+  width: 100%;
+  align-items: flex-start;
+}
+
+/* Inner HIDS and Admin boxes */
+.inner-box {
+  flex: 1;
+  background: #0d243a;
+  border-radius: 10px;
+  padding: 10px;
+  border: 1px solid rgba(255,255,255,0.03);
+  position: relative;
+  min-height: 130px;
+}
+
 /* ATTACKER */
 .attacker-circle {
   width: 80px;
@@ -89,9 +117,12 @@
   align-items: center;
   background: rgba(239,68,68,0.18);
   box-shadow: 0 8px 28px rgba(239,68,68,0.25);
+  /* center perfectly inside its card */
+  margin: 0 auto;
+  animation: attackerBounce 2.3s infinite ease-in-out;
 }
 
-.attacker-emoji { font-size: 30px; }
+.attacker-emoji { font-size: 30px; animation: attackerPulse 1.7s infinite; }
 
 .stage-name {
   font-size: 15px;
@@ -199,16 +230,7 @@
   100% { left: calc(100% + 16px); opacity: 0; }
 }
 
-/* HIDS FINAL STAGE */
-.hids-card {
-  width: 320px;
-}
-
-.hids-inner {
-  display: flex;
-  gap: 12px;
-}
-
+/* HIDS FINAL STAGE inner boxes specifics */
 .hids-left, .hids-right {
   flex: 1;
   display: flex;
@@ -236,6 +258,19 @@
   display: flex;
   justify-content: space-between;
 }
+
+/* HIDS pulse overlay inside the left inner box */
+.hids-pulse {
+  position: absolute;
+  inset: 0;
+  border-radius: 10px;
+  opacity: 0.12;
+  pointer-events: none;
+}
+
+.hids-pulse.normal { box-shadow: 0 0 0 0 rgba(34,197,94,0.3); animation: pulseNormal 3s infinite; }
+.hids-pulse.active { box-shadow: 0 0 0 0 rgba(250,204,21,0.45); animation: pulseActive 1.8s infinite; }
+.hids-pulse.danger { box-shadow: 0 0 0 0 rgba(239,68,68,0.6); animation: pulseDanger 1s infinite; }
 
 /* ADMIN LOG LIST */
 .admin-logs {
@@ -270,18 +305,20 @@
   font-weight: 700;
 }
 
-/* LEGEND */
-.hids-legend {
+/* LEGEND (concise) */
+.hids-legend.concise {
   margin-top: 12px;
   display: flex;
   gap: 12px;
   flex-wrap: wrap;
+  justify-content: center;
 }
 
 .legend-item {
   display: flex;
   align-items: center;
   gap: 6px;
+  font-size: 13px;
 }
 
 .legend-dot {
@@ -292,7 +329,31 @@
 
 .legend-attacker { background: #ef4444; }
 .legend-host { background: #3b82f6; }
-.legend-server { background: #8fb6ff; }
-.legend-normal { background: #34d399; }
-.legend-suspicious { background: #f59e0b; }
 .legend-critical { background: #ef4444; }
+
+/* Animations for pulses */
+@keyframes pulseNormal {
+  0% { box-shadow: 0 0 0 0 rgba(34,197,94,0.3); }
+  70% { box-shadow: 0 0 18px 10px rgba(34,197,94,0); }
+  100% { box-shadow: 0 0 0 0 rgba(34,197,94,0); }
+}
+
+@keyframes pulseActive {
+  0% { box-shadow: 0 0 0 0 rgba(250,204,21,0.45); }
+  70% { box-shadow: 0 0 18px 10px rgba(250,204,21,0); }
+  100% { box-shadow: 0 0 0 0 rgba(250,204,21,0); }
+}
+
+@keyframes pulseDanger {
+  0% { box-shadow: 0 0 0 0 rgba(239,68,68,0.6); }
+  70% { box-shadow: 0 0 18px 10px rgba(239,68,68,0); }
+  100% { box-shadow: 0 0 0 0 rgba(239,68,68,0); }
+}
+
+/* RESPONSIVE */
+@media (max-width:1100px) {
+  .hids-flow-row { flex-direction:column; align-items:center; gap:18px; }
+  .stage-card { width: 92%; max-width:520px; }
+  .connector { width: 70%; }
+  .stage3-box { width: 92%; }
+}

@@ -121,12 +121,14 @@ export default function AnimatedHidsSection({ hasAlerts = false, hasHighSeverity
 
         {/* STAGE 3 — HIDS + SECURITY ADMIN */}
         <div className="stage">
-          <div className="stage-card hids-card">
-            <div className="stage-name">HIDS System & Security Admin</div>
+          {/* BIG outer box for Stage 3 */}
+          <div className="stage-card stage3-box">
+            <div className="stage-name">HIDS Stage</div>
 
-            <div className="hids-inner">
-              {/* LEFT SIDE — HIDS SYSTEM */}
-              <div className="hids-left">
+            {/* Inner two boxes inside Stage 3 */}
+            <div className="stage3-inner">
+              {/* LEFT SIDE — HIDS SYSTEM box */}
+              <div className="inner-box hids-inner-box">
                 <div className="hids-left-head">
                   <div className="hids-icon">🛡️</div>
                   <div className="hids-left-title">HIDS System</div>
@@ -136,10 +138,11 @@ export default function AnimatedHidsSection({ hasAlerts = false, hasHighSeverity
                   <div className="stat-line"><span>Events/hr:</span> <span>420</span></div>
                   <div className="stat-line"><span>Latency:</span> <span>0.8s</span></div>
                 </div>
+                <div className={`hids-pulse ${hasHighSeverity ? "danger" : hasAlerts ? "active" : "normal"}`}></div>
               </div>
 
-              {/* RIGHT SIDE — SECURITY ADMIN */}
-              <div className="hids-right">
+              {/* RIGHT SIDE — SECURITY ADMIN box */}
+              <div className="inner-box admin-inner-box">
                 <div className="admin-head">
                   <div className="admin-icon">👨‍💼</div>
                   <div className="admin-title">Security Admin</div>
@@ -165,20 +168,17 @@ export default function AnimatedHidsSection({ hasAlerts = false, hasHighSeverity
                   </div>
                 </div>
               </div>
-            </div>
-          </div>
+            </div> {/* end stage3-inner */}
+
+          </div> {/* end stage3-box */}
         </div>
       </div>
 
-
-      {/* LEGEND */}
-      <div className="hids-legend">
+      {/* LEGEND (concise) */}
+      <div className="hids-legend concise">
         <div className="legend-item"><span className="legend-dot legend-attacker" /> Attacker</div>
-        <div className="legend-item"><span className="legend-dot legend-host" /> Hosts</div>
-        <div className="legend-item"><span className="legend-dot legend-server" /> Servers</div>
-        <div className="legend-item"><span className="legend-dot legend-normal" /> Normal</div>
-        <div className="legend-item"><span className="legend-dot legend-suspicious" /> Suspicious</div>
-        <div className="legend-item"><span className="legend-dot legend-critical" /> Critical</div>
+        <div className="legend-item"><span className="legend-dot legend-host" /> Hosts & Servers</div>
+        <div className="legend-item"><span className="legend-dot legend-critical" /> Alerts</div>
       </div>
     </section>
   );
