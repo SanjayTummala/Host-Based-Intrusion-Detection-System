@@ -1,8 +1,15 @@
 import React from "react";
 import "./AnimatedHidsSection.css";
 
-export default function AnimatedHidsSection({ hasAlerts = false, hasHighSeverity = false }) {
-  const streamState = hasHighSeverity ? "critical" : hasAlerts ? "suspicious" : "normal";
+export default function AnimatedHidsSection({
+  hasAlerts = false,
+  hasHighSeverity = false,
+}) {
+  const streamState = hasHighSeverity
+    ? "critical"
+    : hasAlerts
+    ? "suspicious"
+    : "normal";
 
   const packets = [1, 2, 3].map((i) => (
     <span key={i} className={`stream-packet packet-${i} ${streamState}`} />
@@ -11,7 +18,9 @@ export default function AnimatedHidsSection({ hasAlerts = false, hasHighSeverity
   const maliciousPackets = [1, 2].map((i) => (
     <span
       key={i}
-      className={`malicious-packet m-${i} ${hasAlerts || hasHighSeverity ? "visible" : ""}`}
+      className={`malicious-packet m-${i} ${
+        hasAlerts || hasHighSeverity ? "visible" : ""
+      }`}
     />
   ));
 
@@ -22,15 +31,15 @@ export default function AnimatedHidsSection({ hasAlerts = false, hasHighSeverity
         <div className="hids-header-left">
           <svg className="shield-svg" viewBox="0 0 120 120">
             <defs>
-              <linearGradient id="g1" x1="0" x2="1">
-                <stop offset="0" stopColor="#36d1dc" />
-                <stop offset="1" stopColor="#5b86e5" />
+              <linearGradient id="shieldGrad" x1="0" x2="1">
+                <stop offset="0" stopColor="#38bdf8" />
+                <stop offset="1" stopColor="#2563eb" />
               </linearGradient>
             </defs>
             <path
               d="M60 8 L96 22 V50 C96 78 78 100 60 111 C42 100 24 78 24 50 V22 Z"
-              fill="url(#g1)"
-              stroke="#042033"
+              fill="url(#shieldGrad)"
+              stroke="#021826"
               strokeWidth="2"
             />
             <text
@@ -38,9 +47,8 @@ export default function AnimatedHidsSection({ hasAlerts = false, hasHighSeverity
               y="66"
               textAnchor="middle"
               fontSize="20"
-              fontFamily="Verdana"
-              fill="#021826"
               fontWeight="700"
+              fill="#021826"
             >
               HIDS
             </text>
@@ -48,70 +56,72 @@ export default function AnimatedHidsSection({ hasAlerts = false, hasHighSeverity
         </div>
 
         <div className="hids-header-center">
-          <h1 className="hids-title">Host-Based Intrusion Detection System</h1>
+          <h1 className="hids-title">
+            Host-Based Intrusion Detection System
+          </h1>
         </div>
 
         <div className="hids-header-right">
           <div className={`hids-status ${streamState}`}>
-            {hasHighSeverity ? "High Severity" : hasAlerts ? "Active Alerts" : "Monitoring"}
+            {hasHighSeverity
+              ? "High Severity"
+              : hasAlerts
+              ? "Active Alerts"
+              : "Monitoring"}
           </div>
         </div>
       </header>
 
-      {/* MAIN HORIZONTAL FLOW */}
+      {/* FLOW */}
       <div className="hids-flow-row">
-        {/* STAGE 1 — ATTACKER */}
+        {/* STAGE 1 */}
         <div className="stage">
           <div className="stage-card attacker-card">
             <div className="attacker-circle">
-              <div className="attacker-emoji">👨‍💻</div>
+              <span className="attacker-emoji">👨‍💻</span>
             </div>
             <div className="stage-name">External Attacker</div>
-            <div className="stage-small">Threat actor generating malicious traffic</div>
+            <div className="stage-small">Malicious traffic source</div>
           </div>
         </div>
 
-        {/* CONNECTOR 1 → 2 */}
         <div className="connector">
           <div className={`stream-line ${streamState}`}>{packets}</div>
         </div>
 
-        {/* STAGE 2 — ORGANIZATION */}
+        {/* STAGE 2 */}
         <div className="stage">
           <div className="stage-card org-card">
-            <div className="stage-name">Organization Hosts</div>
+            <div className="stage-name">Organization</div>
 
-            {/* USERS ROW */}
             <div className="org-row">
               <div className="org-node">
                 <div className="node-icon">👩‍💻</div>
-                <div className="node-label">User A</div>
+                <div>User A</div>
               </div>
               <div className="org-node">
                 <div className="node-icon">👨‍💻</div>
-                <div className="node-label">User B</div>
+                <div>User B</div>
               </div>
               <div className="org-node">
                 <div className="node-icon">🧑‍💻</div>
-                <div className="node-label">User C</div>
+                <div>User C</div>
               </div>
             </div>
 
-            {/* SERVERS ROW */}
             <div className="org-row servers-row">
               <div className="org-node server">
                 <div className="node-icon">🖥️</div>
-                <div className="node-label">App Server</div>
+                <div>App Server</div>
               </div>
               <div className="org-node server">
                 <div className="node-icon">💾</div>
-                <div className="node-label">DB Server</div>
+                <div>DB Server</div>
               </div>
             </div>
           </div>
         </div>
 
-        {/* CONNECTOR 2 → 3 */}
         <div className="connector">
           <div className={`stream-line ${streamState}`}>
             {packets}
@@ -119,67 +129,74 @@ export default function AnimatedHidsSection({ hasAlerts = false, hasHighSeverity
           </div>
         </div>
 
-        {/* STAGE 3 — HIDS + SECURITY ADMIN */}
+        {/* STAGE 3 */}
         <div className="stage">
-          {/* BIG outer box for Stage 3 */}
           <div className="stage-card stage3-box">
-            <div className="stage-name">HIDS Stage</div>
+            <div className="stage-name">Detection & Response</div>
 
-            {/* Inner two boxes inside Stage 3 */}
             <div className="stage3-inner">
-              {/* LEFT SIDE — HIDS SYSTEM box */}
-              <div className="inner-box hids-inner-box">
-                <div className="hids-left-head">
-                  <div className="hids-icon">🛡️</div>
-                  <div className="hids-left-title">HIDS System</div>
-                </div>
+              {/* HIDS SYSTEM */}
+              <div className="inner-box hids-system-box">
+                <div className="box-title">🛡️ HIDS Sensor</div>
                 <div className="hids-stats">
-                  <div className="stat-line"><span>Agents:</span> <span>125</span></div>
-                  <div className="stat-line"><span>Events/hr:</span> <span>420</span></div>
-                  <div className="stat-line"><span>Latency:</span> <span>0.8s</span></div>
+                  <div>Agents: 125</div>
+                  <div>Events/hr: 420</div>
+                  <div>Latency: 0.8s</div>
                 </div>
-                <div className={`hids-pulse ${hasHighSeverity ? "danger" : hasAlerts ? "active" : "normal"}`}></div>
+                <div className={`hids-pulse ${streamState}`} />
               </div>
 
-              {/* RIGHT SIDE — SECURITY ADMIN box */}
-              <div className="inner-box admin-inner-box">
-                <div className="admin-head">
-                  <div className="admin-icon">👨‍💼</div>
-                  <div className="admin-title">Security Admin</div>
-                </div>
+              {/* SECURITY ADMIN */}
+              <div className="inner-box admin-box">
+                <div className="box-title">👨‍💼 Security Admin</div>
 
                 <div className="admin-logs">
                   <div className="log-item log-normal">
-                    <div className="log-dot" />
-                    <div className="log-text">Normal Activity</div>
-                    <div className="log-badge">120</div>
+                    <span className="log-dot" />
+                    Normal
+                    <span className="log-badge">120</span>
                   </div>
-
                   <div className="log-item log-suspicious">
-                    <div className="log-dot" />
-                    <div className="log-text">Suspicious Behavior</div>
-                    <div className="log-badge">6</div>
+                    <span className="log-dot" />
+                    Suspicious
+                    <span className="log-badge">6</span>
                   </div>
-
-                  <div className={`log-item log-critical ${hasHighSeverity ? "pulse" : ""}`}>
-                    <div className="log-dot" />
-                    <div className="log-text">Critical Alerts</div>
-                    <div className="log-badge">{hasHighSeverity ? 2 : 0}</div>
+                  <div
+                    className={`log-item log-critical ${
+                      hasHighSeverity ? "pulse" : ""
+                    }`}
+                  >
+                    <span className="log-dot" />
+                    Critical
+                    <span className="log-badge">
+                      {hasHighSeverity ? 2 : 0}
+                    </span>
                   </div>
                 </div>
               </div>
-            </div> {/* end stage3-inner */}
-
-          </div> {/* end stage3-box */}
+            </div>
+          </div>
         </div>
       </div>
 
-      {/* LEGEND (concise) */}
-      <div className="hids-legend concise">
-        <div className="legend-item"><span className="legend-dot legend-attacker" /> Attacker</div>
-        <div className="legend-item"><span className="legend-dot legend-host" /> Hosts & Servers</div>
-        <div className="legend-item"><span className="legend-dot legend-critical" /> Alerts</div>
-      </div>
+      {/* LEGEND */}
+      <aside className="hids-legend-vertical">
+        <h4>Legend</h4>
+        <ul>
+          <li>
+            <span className="dot attacker" /> External Attacker
+          </li>
+          <li>
+            <span className="dot traffic" /> Network Traffic
+          </li>
+          <li>
+            <span className="dot alert" /> Detected Threat
+          </li>
+          <li>
+            <span className="dot response" /> HIDS Response
+          </li>
+        </ul>
+      </aside>
     </section>
   );
 }
