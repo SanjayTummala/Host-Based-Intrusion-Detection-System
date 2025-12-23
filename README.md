@@ -8,7 +8,7 @@ This project focuses on **clarity, realism, and completeness**, showing not only
 
 ## 🌐 Overview
 
-The Host-Based Intrusion Detection System (HIDS) monitors **host-level activities**, such as:
+The Host-Based Intrusion Detection System (HIDS) monitors **host-level activities**, including:
 
 - File access and modification  
 - Process execution  
@@ -75,15 +75,57 @@ This section is intentionally visual to make security behavior easy to understan
 
 ---
 
-## 🧩 System Architecture
+## ⚙️ Technology Stack
 
-```mermaid
-flowchart TD
-    A[External Attacker<br/>(Simulated Threats)]
-    B[Organization Hosts<br/>User A • User B • User C<br/>App Server • Database Server]
-    C[HIDS Detection Engine<br/>Event Analysis<br/>Severity Scoring<br/>Threat Classification]
-    D[Security Admin Console<br/>Normal • Suspicious • Critical<br/>Visual Alert Dashboard]
+### Frontend
 
-    A -->|Malicious Activity| B
-    B -->|Host Logs & Events| C
-    C -->|Classified Alerts| D
+| Technology | Purpose |
+|-----------|---------|
+| React | UI & component architecture |
+| CSS | Custom animations and layout |
+| GitHub Pages | Frontend deployment |
+
+### Backend
+
+| Technology | Purpose |
+|-----------|---------|
+| Python | Core detection logic |
+| REST API | Event & alert handling |
+| Database | Persistent log storage |
+| Render | Backend deployment |
+
+---
+
+## 🧠 Design Philosophy
+
+This project was built with the idea that **security should be understandable**, not hidden behind raw logs.
+
+- Visual explanations over raw numbers  
+- Clear flow over complexity  
+- Realistic behavior over theoretical examples  
+
+Every section is designed to explain **how HIDS works in practice**.
+
+---
+
+## 👨‍💻 Developed By
+
+**Sanjay Kumar**
+
+This project represents focused effort on:
+
+- Security fundamentals  
+- System design  
+- Visual clarity  
+- Real-world behavior  
+
+---
+
+## ⭐ Support
+
+If you find this project useful:
+
+- ⭐ Star the repository  
+- 🍴 Fork and experiment  
+- 🧠 Learn from it  
+- 🔧 Improve it  
